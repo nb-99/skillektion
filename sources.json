@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "skills": {
+    "confluence-workflow": {
+      "mode": "owned"
+    },
+    "defuddle": {
+      "mode": "mirror",
+      "repository": "https://github.com/kepano/obsidian-skills",
+      "revision": "a1dc48e68138490d522c04cbf5822214c6eb1202",
+      "path": "skills/defuddle",
+      "license": {
+        "spdx": "MIT",
+        "path": "LICENSE"
+      }
+    },
+    "forgejo-cli": {
+      "mode": "owned"
+    },
+    "gh-cli": {
+      "mode": "owned"
+    },
+    "git-conventional-commits": {
+      "mode": "owned"
+    },
+    "git-working-agreement": {
+      "mode": "owned"
+    },
+    "glab-cli": {
+      "mode": "owned"
+    },
+    "jira-workflow": {
+      "mode": "owned"
+    },
+    "k8s-ops": {
+      "mode": "owned"
+    },
+    "obsidian-markdown": {
+      "mode": "mirror",
+      "repository": "https://github.com/kepano/obsidian-skills",
+      "revision": "a1dc48e68138490d522c04cbf5822214c6eb1202",
+      "path": "skills/obsidian-markdown",
+      "license": {
+        "spdx": "MIT",
+        "path": "LICENSE"
+      }
+    },
+    "openspec-workflow": {
+      "mode": "owned"
+    }
+  }
+}
