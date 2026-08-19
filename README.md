@@ -58,6 +58,11 @@ outside `SKILL.md` and do not consume the agent's normal skill context.
 The root MIT license applies to Skillektion's original content; redistributed
 skills remain covered by their accompanying `LICENSE.upstream` notices.
 
+Mirrors retain upstream client-specific metadata such as
+`disable-model-invocation`. Clients that do not support a field may ignore it,
+so explicitly invoked workflow skills can be more discoverable there than in
+their original client. Adapted skills document their changes in `SOURCE.md`.
+
 ## Maintenance
 
 Validate the catalog:
@@ -72,7 +77,8 @@ Refresh all mirrors from their pinned revisions:
 npm run sync
 ```
 
-Verify that checked-in mirrors still match their pinned upstream revisions:
+Verify that mirrors match their pinned revisions and adapted skills retain
+their recorded upstream license and source path:
 
 ```sh
 npm run sync:check

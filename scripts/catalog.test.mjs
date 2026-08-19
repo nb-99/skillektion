@@ -15,8 +15,9 @@ test("catalog and source ledger agree", async () => {
   assert.equal(manifest.version, 1);
   const entries = await readdir(path.join(root, "skills"), { withFileTypes: true });
   const directories = entries.filter((entry) => entry.isDirectory()).map((entry) => entry.name).sort();
-  const declared = Object.keys(manifest.skills).sort();
+  const declared = Object.keys(manifest.skills);
 
+  assert.deepEqual(declared, [...declared].sort(), "sources.json skills must be sorted");
   assert.deepEqual(directories, declared);
 });
 
@@ -53,6 +54,7 @@ for (const [name, source] of Object.entries(manifest.skills)) {
     await readFile(path.join(root, "skills", name, "LICENSE.upstream"), "utf8");
     if (source.mode === "adapted") {
       assert.ok(source.notes, "adapted skills must explain their portability changes");
+      await readFile(path.join(root, "skills", name, "SOURCE.md"), "utf8");
     }
   });
 }

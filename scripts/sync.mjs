@@ -9,19 +9,21 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const manifest = JSON.parse(await readFile(path.join(root, "sources.json"), "utf8"));
 const check = process.argv.includes("--check");
 const selected = process.argv.slice(2).filter((argument) => argument !== "--check");
-const mirrors = Object.entries(manifest.skills).filter(
-  ([name, source]) => source.mode === "mirror" && (selected.length === 0 || selected.includes(name)),
+const sources = Object.entries(manifest.skills).filter(
+  ([name, source]) =>
+    (source.mode === "mirror" || (check && source.mode === "adapted")) &&
+    (selected.length === 0 || selected.includes(name)),
 );
 
-const unknown = selected.filter((name) => !mirrors.some(([mirror]) => mirror === name));
+const unknown = selected.filter((name) => !sources.some(([sourceName]) => sourceName === name));
 if (unknown.length > 0) {
-  throw new Error(`not a mirrored skill: ${unknown.join(", ")}`);
+  throw new Error(`not a ${check ? "third-party" : "mirrored"} skill: ${unknown.join(", ")}`);
 }
 
 const temporaryRoot = await mkdtemp(path.join(tmpdir(), "skillektion-sync-"));
 
 try {
-  for (const [name, source] of mirrors) {
+  for (const [name, source] of sources) {
     validateSource(name, source);
 
     const checkout = path.join(temporaryRoot, `${name}-checkout`);
@@ -29,12 +31,21 @@ try {
     run("git", ["-C", checkout, "sparse-checkout", "set", "--", source.path]);
     run("git", ["-C", checkout, "checkout", "--quiet", source.revision]);
 
+    const upstreamLicense = gitShow(checkout, source.revision, source.license.path);
+    if (source.mode === "adapted") {
+      await readdir(path.join(checkout, source.path));
+      assert.deepEqual(
+        await readFile(path.join(root, "skills", name, "LICENSE.upstream")),
+        upstreamLicense,
+        `${name}/LICENSE.upstream differs from upstream`,
+      );
+      console.log(`verified adapted source ${name} at ${source.revision}`);
+      continue;
+    }
+
     const generated = path.join(temporaryRoot, `${name}-generated`);
     await cp(path.join(checkout, source.path), generated, { recursive: true });
-    await writeFile(
-      path.join(generated, "LICENSE.upstream"),
-      gitShow(checkout, source.revision, source.license.path),
-    );
+    await writeFile(path.join(generated, "LICENSE.upstream"), upstreamLicense);
 
     const destination = path.join(root, "skills", name);
     if (check) {
