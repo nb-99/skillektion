@@ -5,7 +5,7 @@ Keep `skills/` as the installable source of truth.
 ## Owned skills
 
 Edit owned skills directly and keep their directory name equal to the `name`
-field in `SKILL.md`.
+field in `SKILL.md`. Add Codex presentation metadata in `agents/openai.yaml`.
 
 ## Mirrored skills
 
@@ -18,7 +18,8 @@ Do not edit mirrors directly. Update the pinned revision in `sources.json`, run
 Edit adapted skills directly. The recorded revision is the latest upstream
 version reviewed and incorporated, not a byte-for-byte claim. Explain the
 portability difference in `notes`, add a user-visible `SOURCE.md`, and preserve
-the upstream license notice.
+the upstream license notice. Add Codex presentation metadata and keep
+manual-only invocation policy consistent with `disable-model-invocation`.
 
 The names `agent-memory` and `nix-home-manager-expert` are reserved for
 host-generated or repository-local configuration and must not be added to this

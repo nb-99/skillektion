@@ -1,0 +1,3 @@
+interface:
+  display_name: "Git Working Agreement"
+  short_description: "Follow the shared Git safety workflow"

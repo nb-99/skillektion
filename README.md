@@ -61,7 +61,11 @@ skills remain covered by their accompanying `LICENSE.upstream` notices.
 Mirrors retain upstream client-specific metadata such as
 `disable-model-invocation`. Clients that do not support a field may ignore it,
 so explicitly invoked workflow skills can be more discoverable there than in
-their original client. Adapted skills document their changes in `SOURCE.md`.
+their original client. Owned and adapted skills add Codex presentation
+metadata in `agents/openai.yaml`; manual-only skills also encode matching
+invocation policy for Codex and clients that honor
+`disable-model-invocation`. Adapted skills document their changes in
+`SOURCE.md`.
 
 ## Maintenance
 

@@ -32,6 +32,42 @@ for (const [name, source] of Object.entries(manifest.skills)) {
     assert.match(frontmatter[1], new RegExp(`^name: ["']?${name}["']?$`, "m"));
     assert.match(frontmatter[1], /^description: .+$/m);
 
+    const disablesModelInvocation = /^disable-model-invocation: true$/m.test(frontmatter[1]);
+    let openaiMetadata;
+    try {
+      openaiMetadata = await readFile(
+        path.join(root, "skills", name, "agents", "openai.yaml"),
+        "utf8",
+      );
+    } catch (error) {
+      if (error.code !== "ENOENT") throw error;
+    }
+
+    if (source.mode !== "mirror") {
+      assert.ok(openaiMetadata, "owned and adapted skills must include OpenAI metadata");
+      assert.match(openaiMetadata, /^interface:\n/m);
+      assert.match(openaiMetadata, /^  display_name: .+$/m);
+      assert.match(openaiMetadata, /^  short_description: .+$/m);
+    }
+    if (openaiMetadata) {
+      const shortDescription = openaiMetadata.match(/^  short_description: ["']?(.+?)["']?$/m)?.[1];
+      assert.ok(shortDescription, "OpenAI metadata must include a short description");
+      assert.ok(
+        shortDescription.length >= 25 && shortDescription.length <= 64,
+        "OpenAI short descriptions must contain 25-64 characters",
+      );
+      const disablesImplicitInvocation =
+        /^  allow_implicit_invocation: false$/m.test(openaiMetadata);
+      if (disablesImplicitInvocation) {
+        assert.match(openaiMetadata, /^policy:\n  allow_implicit_invocation: false$/m);
+      }
+      assert.equal(
+        disablesImplicitInvocation,
+        disablesModelInvocation,
+        "manual-only invocation must be encoded consistently across clients",
+      );
+    }
+
     assert.deepEqual(
       Object.keys(source).sort(),
       source.mode === "owned"

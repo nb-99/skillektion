@@ -1,0 +1,3 @@
+interface:
+  display_name: "Jira Workflow"
+  short_description: "Read and update Jira issues safely"
