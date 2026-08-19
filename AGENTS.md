@@ -11,6 +11,8 @@ Skillektion publishes a curated flat catalog of portable agent skills.
 - Preserve complete skill directories, including scripts and references.
 - Keep third-party attribution in `LICENSE.upstream`, outside `SKILL.md`, and
   document every adapted skill's changes in `SOURCE.md`.
+- Give owned and adapted skills Codex presentation metadata. Encode manual-only
+  invocation in both `disable-model-invocation` and `agents/openai.yaml`.
 - Do not add the reserved `agent-memory` or `nix-home-manager-expert` names.
 
 ## Validation

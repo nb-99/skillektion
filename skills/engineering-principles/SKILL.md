@@ -1,7 +1,6 @@
 ---
 name: engineering-principles
-description: Apply a compact set of engineering principles to substantial design, migration, operations, concurrency, and maintenance decisions. Use when a task needs a named decision rule beyond ordinary implementation guidance.
-disable-model-invocation: true
+description: Apply a compact set of engineering principles to substantial design, migration, operations, concurrency, and maintenance decisions. Use when modifying code or when a task needs a named decision rule beyond ordinary implementation guidance.
 ---
 
 # Engineering Principles

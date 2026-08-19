@@ -1,0 +1,3 @@
+interface:
+  display_name: "GitLab CLI"
+  short_description: "Operate GitLab safely with glab"

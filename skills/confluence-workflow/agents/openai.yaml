@@ -1,0 +1,3 @@
+interface:
+  display_name: "Confluence Workflow"
+  short_description: "Read and search Telekom Confluence safely"

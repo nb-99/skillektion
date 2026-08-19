@@ -9,7 +9,8 @@ Pstack registers 21 principle leaves with model invocation disabled. Its
 `poteto-mode` reads an inline index for multi-step tasks, then loads only the
 applicable leaf; users mainly invoke principle names to steer a workflow. This
 adaptation consolidates selected portable rules into one conditional index and
-omits Cursor mode mechanics. It excludes the upstream root-cause, type-system,
+keeps it available for automatic selection while omitting Cursor mode
+mechanics. It excludes the upstream root-cause, type-system,
 domain-modeling, context-window, subtraction, foundational-thinking,
 outcome-execution, laziness, experience-first, design-space, and
 never-block-on-the-human leaves because dedicated skills or host policy cover

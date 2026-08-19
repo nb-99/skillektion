@@ -1,0 +1,3 @@
+interface:
+  display_name: "OpenSpec Workflow"
+  short_description: "Create, apply, and archive OpenSpec changes"
