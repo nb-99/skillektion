@@ -9,7 +9,8 @@ Skillektion publishes a curated flat catalog of portable agent skills.
 - Edit owned and adapted skills directly. Refresh mirrors only through
   `npm run sync`.
 - Preserve complete skill directories, including scripts and references.
-- Keep third-party attribution in `LICENSE.upstream`, outside `SKILL.md`.
+- Keep third-party attribution in `LICENSE.upstream`, outside `SKILL.md`, and
+  document every adapted skill's changes in `SOURCE.md`.
 - Do not add the reserved `agent-memory` or `nix-home-manager-expert` names.
 
 ## Validation

@@ -1,6 +1,49 @@
 {
   "version": 1,
   "skills": {
+    "blast-radius": {
+      "mode": "adapted",
+      "repository": "https://github.com/cursor/plugins",
+      "revision": "60c641e4fad674784b30abcf9f8915dea39df38d",
+      "path": "pstack/skills/blast-radius",
+      "notes": "Removes pstack sibling and multi-model requirements while preserving evidence-based impact analysis and executable proof of the central safety invariant.",
+      "license": {
+        "spdx": "MIT",
+        "path": "pstack/LICENSE"
+      }
+    },
+    "bro": {
+      "mode": "adapted",
+      "repository": "https://github.com/cursor/plugins",
+      "revision": "60c641e4fad674784b30abcf9f8915dea39df38d",
+      "path": "pstack/skills/bro",
+      "notes": "Retains the plain-language restatement command and adds preservation rules so simplification does not lose facts, caveats, decisions, or next steps.",
+      "license": {
+        "spdx": "MIT",
+        "path": "pstack/LICENSE"
+      }
+    },
+    "code-review": {
+      "mode": "adapted",
+      "repository": "https://github.com/cursor/plugins",
+      "revision": "60c641e4fad674784b30abcf9f8915dea39df38d",
+      "path": "pstack/skills/interrogate",
+      "notes": "Combines an existing Skillektion consumer's eight-category review-agent contract with pstack interrogate's independent reviewer panel, evidence rubric, lead judgment, and visible dismissal reasoning; removes Cursor and fixed-model configuration.",
+      "license": {
+        "spdx": "MIT",
+        "path": "pstack/LICENSE"
+      }
+    },
+    "codebase-design": {
+      "mode": "mirror",
+      "repository": "https://github.com/mattpocock/skills",
+      "revision": "885e2ca4d842d139e9aef4e48d366c63cb1b8013",
+      "path": "skills/engineering/codebase-design",
+      "license": {
+        "spdx": "MIT",
+        "path": "LICENSE"
+      }
+    },
     "confluence-workflow": {
       "mode": "owned"
     },
@@ -12,6 +55,27 @@
       "license": {
         "spdx": "MIT",
         "path": "LICENSE"
+      }
+    },
+    "domain-modeling": {
+      "mode": "mirror",
+      "repository": "https://github.com/mattpocock/skills",
+      "revision": "885e2ca4d842d139e9aef4e48d366c63cb1b8013",
+      "path": "skills/engineering/domain-modeling",
+      "license": {
+        "spdx": "MIT",
+        "path": "LICENSE"
+      }
+    },
+    "engineering-principles": {
+      "mode": "adapted",
+      "repository": "https://github.com/cursor/plugins",
+      "revision": "60c641e4fad674784b30abcf9f8915dea39df38d",
+      "path": "pstack/skills/poteto-mode",
+      "notes": "Consolidates selected pstack principle-* leaves into a portable conditional router; excludes Cursor mode mechanics and principles already covered by global rules or dedicated skills.",
+      "license": {
+        "spdx": "MIT",
+        "path": "pstack/LICENSE"
       }
     },
     "forgejo-cli": {
@@ -29,11 +93,92 @@
     "glab-cli": {
       "mode": "owned"
     },
+    "grill-me": {
+      "mode": "mirror",
+      "repository": "https://github.com/mattpocock/skills",
+      "revision": "885e2ca4d842d139e9aef4e48d366c63cb1b8013",
+      "path": "skills/productivity/grill-me",
+      "license": {
+        "spdx": "MIT",
+        "path": "LICENSE"
+      }
+    },
+    "grill-with-docs": {
+      "mode": "mirror",
+      "repository": "https://github.com/mattpocock/skills",
+      "revision": "885e2ca4d842d139e9aef4e48d366c63cb1b8013",
+      "path": "skills/engineering/grill-with-docs",
+      "license": {
+        "spdx": "MIT",
+        "path": "LICENSE"
+      }
+    },
+    "grilling": {
+      "mode": "mirror",
+      "repository": "https://github.com/mattpocock/skills",
+      "revision": "885e2ca4d842d139e9aef4e48d366c63cb1b8013",
+      "path": "skills/productivity/grilling",
+      "license": {
+        "spdx": "MIT",
+        "path": "LICENSE"
+      }
+    },
+    "how": {
+      "mode": "adapted",
+      "repository": "https://github.com/cursor/plugins",
+      "revision": "60c641e4fad674784b30abcf9f8915dea39df38d",
+      "path": "pstack/skills/how",
+      "notes": "Removes fixed models and Cursor task configuration; retains scoped code exploration, optional parallel slices, architectural explanation, and explain-before-critique ordering.",
+      "license": {
+        "spdx": "MIT",
+        "path": "pstack/LICENSE"
+      }
+    },
+    "improve-codebase-architecture": {
+      "mode": "mirror",
+      "repository": "https://github.com/mattpocock/skills",
+      "revision": "885e2ca4d842d139e9aef4e48d366c63cb1b8013",
+      "path": "skills/engineering/improve-codebase-architecture",
+      "license": {
+        "spdx": "MIT",
+        "path": "LICENSE"
+      }
+    },
     "jira-workflow": {
       "mode": "owned"
     },
+    "json-canvas": {
+      "mode": "mirror",
+      "repository": "https://github.com/kepano/obsidian-skills",
+      "revision": "a1dc48e68138490d522c04cbf5822214c6eb1202",
+      "path": "skills/json-canvas",
+      "license": {
+        "spdx": "MIT",
+        "path": "LICENSE"
+      }
+    },
     "k8s-ops": {
       "mode": "owned"
+    },
+    "obsidian-bases": {
+      "mode": "mirror",
+      "repository": "https://github.com/kepano/obsidian-skills",
+      "revision": "a1dc48e68138490d522c04cbf5822214c6eb1202",
+      "path": "skills/obsidian-bases",
+      "license": {
+        "spdx": "MIT",
+        "path": "LICENSE"
+      }
+    },
+    "obsidian-cli": {
+      "mode": "mirror",
+      "repository": "https://github.com/kepano/obsidian-skills",
+      "revision": "a1dc48e68138490d522c04cbf5822214c6eb1202",
+      "path": "skills/obsidian-cli",
+      "license": {
+        "spdx": "MIT",
+        "path": "LICENSE"
+      }
     },
     "obsidian-markdown": {
       "mode": "mirror",
@@ -47,6 +192,129 @@
     },
     "openspec-workflow": {
       "mode": "owned"
+    },
+    "prototype": {
+      "mode": "mirror",
+      "repository": "https://github.com/mattpocock/skills",
+      "revision": "885e2ca4d842d139e9aef4e48d366c63cb1b8013",
+      "path": "skills/engineering/prototype",
+      "license": {
+        "spdx": "MIT",
+        "path": "LICENSE"
+      }
+    },
+    "research": {
+      "mode": "mirror",
+      "repository": "https://github.com/mattpocock/skills",
+      "revision": "885e2ca4d842d139e9aef4e48d366c63cb1b8013",
+      "path": "skills/engineering/research",
+      "license": {
+        "spdx": "MIT",
+        "path": "LICENSE"
+      }
+    },
+    "setup-matt-pocock-skills": {
+      "mode": "mirror",
+      "repository": "https://github.com/mattpocock/skills",
+      "revision": "885e2ca4d842d139e9aef4e48d366c63cb1b8013",
+      "path": "skills/engineering/setup-matt-pocock-skills",
+      "license": {
+        "spdx": "MIT",
+        "path": "LICENSE"
+      }
+    },
+    "skill-miner": {
+      "mode": "adapted",
+      "repository": "https://github.com/cursor/plugins",
+      "revision": "60c641e4fad674784b30abcf9f8915dea39df38d",
+      "path": "pstack/skills/automate-me",
+      "notes": "Replaces Cursor transcript paths, tools, mode-skill conventions, implicit invocation, and automatic publication with supported exports, explicit session selection, privacy gates, a confirmation interview, and reviewable focused artifacts.",
+      "license": {
+        "spdx": "MIT",
+        "path": "pstack/LICENSE"
+      }
+    },
+    "technical-writing": {
+      "mode": "adapted",
+      "repository": "https://github.com/cursor/plugins",
+      "revision": "60c641e4fad674784b30abcf9f8915dea39df38d",
+      "path": "pstack/skills/technical-writing",
+      "notes": "Retains the Diataxis, developer-style, controlled-language, and ambiguity layers while removing date-bound source claims, mandatory sibling invocation, repository-specific snippet indentation policy, and manual-only invocation.",
+      "license": {
+        "spdx": "MIT",
+        "path": "pstack/LICENSE"
+      }
+    },
+    "to-spec": {
+      "mode": "mirror",
+      "repository": "https://github.com/mattpocock/skills",
+      "revision": "885e2ca4d842d139e9aef4e48d366c63cb1b8013",
+      "path": "skills/engineering/to-spec",
+      "license": {
+        "spdx": "MIT",
+        "path": "LICENSE"
+      }
+    },
+    "to-tickets": {
+      "mode": "mirror",
+      "repository": "https://github.com/mattpocock/skills",
+      "revision": "885e2ca4d842d139e9aef4e48d366c63cb1b8013",
+      "path": "skills/engineering/to-tickets",
+      "license": {
+        "spdx": "MIT",
+        "path": "LICENSE"
+      }
+    },
+    "triage": {
+      "mode": "mirror",
+      "repository": "https://github.com/mattpocock/skills",
+      "revision": "885e2ca4d842d139e9aef4e48d366c63cb1b8013",
+      "path": "skills/engineering/triage",
+      "license": {
+        "spdx": "MIT",
+        "path": "LICENSE"
+      }
+    },
+    "unslop": {
+      "mode": "mirror",
+      "repository": "https://github.com/cursor/plugins",
+      "revision": "60c641e4fad674784b30abcf9f8915dea39df38d",
+      "path": "pstack/skills/unslop",
+      "license": {
+        "spdx": "MIT",
+        "path": "pstack/LICENSE"
+      }
+    },
+    "wayfinder": {
+      "mode": "mirror",
+      "repository": "https://github.com/mattpocock/skills",
+      "revision": "885e2ca4d842d139e9aef4e48d366c63cb1b8013",
+      "path": "skills/engineering/wayfinder",
+      "license": {
+        "spdx": "MIT",
+        "path": "LICENSE"
+      }
+    },
+    "why": {
+      "mode": "adapted",
+      "repository": "https://github.com/cursor/plugins",
+      "revision": "60c641e4fad674784b30abcf9f8915dea39df38d",
+      "path": "pstack/skills/why",
+      "notes": "Removes fixed models, Cursor task modes, and mandatory seven-MCP coverage; retains code anchoring, available-source investigation, citation, confidence calibration, contradictions, hypotheses, and explicit gaps.",
+      "license": {
+        "spdx": "MIT",
+        "path": "pstack/LICENSE"
+      }
+    },
+    "writing-for-agents": {
+      "mode": "mirror",
+      "repository": "https://github.com/mattpocock/skills",
+      "revision": "885e2ca4d842d139e9aef4e48d366c63cb1b8013",
+      "path": "skills/productivity/writing-for-agents",
+      "license": {
+        "spdx": "MIT",
+        "path": "LICENSE"
+      }
     }
   }
 }
