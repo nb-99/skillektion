@@ -9,6 +9,10 @@ This is a conditional index, not a checklist to force onto every change. Select
 only principles whose trigger matches the current decision. State the principle
 only when it materially changes the work.
 
+Read [always-on.md](references/always-on.md) for the concise rules that govern
+every code modification. The sections below provide their decision triggers and
+additional context.
+
 ## Principles
 
 ### Minimize Reader Load
