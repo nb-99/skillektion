@@ -1,6 +1,6 @@
 ---
 name: git-conventional-commits
-description: Write git commit messages following Conventional Commits 1.0.0. Use whenever creating or amending a commit, or when a CONTRIBUTING guide is absent and a structured commit message is needed. Covers types, scopes, breaking changes, and examples.
+description: Use whenever committing in git.
 ---
 
 # Conventional Commits
