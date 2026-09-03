@@ -9,8 +9,8 @@ This is a conditional index, not a checklist to force onto every change. Select
 only principles whose trigger matches the current decision. State the principle
 only when it materially changes the work.
 
-Read [always-on.md](references/always-on.md) for the concise rules that govern
-every code modification. The sections below provide their decision triggers and
+Read [always-on.md](references/always-on.md) to select the concise rules relevant
+to a code modification. The sections below provide their decision triggers and
 additional context.
 
 ## Principles
@@ -73,11 +73,14 @@ documentation or memory system.
 
 ### Prove It Works
 
-Use before declaring completion. Check the real artifact or runtime behavior,
-not only compilation, a proxy, a summary, or a worker's self-report. State what
-was verified and what remains uncertain.
+Use when changed behavior or an invariant is ready to exercise. Run the
+narrowest executable check that covers it. For prose or non-executable metadata,
+inspect the resulting artifact. Avoid unrelated suites and generic final
+rechecking when earlier evidence still applies. State what was verified and
+what remains uncertain.
 
 ## Completion
 
-The principle pass is complete when each selected principle names the concrete
-decision it changed and no unselected principle is added merely for ceremony.
+Select relevant principles once. The principle pass is complete when each
+selected principle names the concrete decision it changed and no unselected
+principle is added merely for ceremony.

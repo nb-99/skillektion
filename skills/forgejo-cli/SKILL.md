@@ -12,6 +12,16 @@ Two complementary CLIs are available:
 
 Both tools infer the repository from the current Git checkout where possible. Use an explicit repository or remote when working outside a checkout or when multiple remotes exist.
 
+Read freely. An explicit user request that names the Forgejo target and a
+bounded write action authorizes that action. Otherwise, show the exact mutation
+and ask for confirmation before running it.
+
+Always confirm immediately before destructive, irreversible,
+privilege-changing, or materially broader work. This includes merging or
+closing pull requests, deleting content or tags, publishing or deleting
+releases, cancelling runs, changing repository access, settings, variables, or
+secrets, rewriting history, and any action whose effects exceed the request.
+
 ## Which Tool To Use
 
 | Task                                          | Use                   | Command family                       |
@@ -83,7 +93,7 @@ fj pr merge PR --method squash
 fj pr close PR --with-msg "Closing because ..."
 ```
 
-Prefix the title with `WIP: ` to create a draft PR. `--autofill` derives the title and body from commits. `--agit` is the Forgejo-specific workflow for creating a PR without the usual fork/push flow; use it only when explicitly intended because it can change local Git configuration and push data.
+Prefix the title with `WIP: ` to create a draft PR. `--autofill` derives the title and body from commits. `--agit` is the Forgejo-specific workflow for creating a PR without the usual fork/push flow. Confirm immediately before using it because it can change local Git configuration and push data.
 
 Use `fgj` when JSON output or a `fgj`-specific PR feature is more useful:
 
@@ -214,7 +224,7 @@ fgj api repos/OWNER/REPO/commits/SHA/status | jq
 
 - Prefer explicit `--repo HOST/OWNER/REPO` or `--remote NAME` when multiple remotes or repositories are in play.
 - Use read-only commands such as search, view, status, list, and contents before mutating commands.
-- Confirm the repository, branch, issue/PR number, run ID, job ID, tag, or release name before remote changes.
+- Recheck the repository, branch, issue/PR number, run ID, job ID, tag, or release name before remote changes.
 - Treat merge, close, tag, release, dispatch, rerun, cancel, delete, and Actions configuration commands as mutating operations.
 - Never expose credentials, private keys, or Actions secret values in arguments, output, files, or chat.
 - Use `--style minimal` with `fj` for cleaner piped output, but do not treat it as a stable machine-readable format.

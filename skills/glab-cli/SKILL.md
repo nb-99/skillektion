@@ -8,8 +8,15 @@ description: Operate on GitLab from the terminal with the glab CLI. Use for GitL
 Use the `glab` CLI for all GitLab operations (`glab api` covers anything without
 a dedicated subcommand). Prerequisite: `glab auth status` must be authenticated.
 
-Read freely; **ask for confirmation before any write/mutation** (creating or
-editing issues/MRs, commenting, approving, merging, releasing).
+Read freely. An explicit user request that names the GitLab target and a bounded
+write action authorizes that action. Otherwise, show the exact mutation and ask
+for confirmation before running it.
+
+Always confirm immediately before destructive, irreversible,
+privilege-changing, or materially broader work. This includes merges, closing
+or deleting content, publishing or deleting releases, changing access or
+secrets, and any action whose effects exceed the request. Recheck the project
+and object identifier before every mutation.
 
 ## Repos & info
 
@@ -23,8 +30,8 @@ glab api projects/GROUP%2FPROJECT          # URL-encode the slash as %2F
 ```sh
 glab issue list --repo GROUP/PROJECT
 glab issue view NUMBER --comments
-glab issue create --title T --description D   # WRITE: confirm first
-glab issue note NUMBER --message M            # WRITE: confirm first
+glab issue create --title T --description D   # WRITE
+glab issue note NUMBER --message M            # WRITE
 ```
 
 ## Merge requests
@@ -33,9 +40,9 @@ glab issue note NUMBER --message M            # WRITE: confirm first
 glab mr list
 glab mr view NUMBER --comments
 glab mr diff NUMBER
-glab mr create --source-branch BRANCH --target-branch main --title T   # WRITE: confirm
-glab mr approve NUMBER                                                 # WRITE: confirm
-glab mr merge NUMBER --squash                                          # WRITE: confirm
+glab mr create --source-branch BRANCH --target-branch main --title T   # WRITE
+glab mr approve NUMBER                                                 # WRITE
+glab mr merge NUMBER --squash                                          # HIGH-RISK: confirm
 ```
 
 ## Pipelines / CI
@@ -45,7 +52,7 @@ glab ci list
 glab ci view              # current branch's pipeline
 glab ci status
 glab ci trace JOB_ID      # stream a job's log
-glab ci retry JOB_ID      # WRITE: confirm first
+glab ci retry JOB_ID      # HIGH-RISK: confirm
 ```
 
 ## Releases
@@ -53,7 +60,7 @@ glab ci retry JOB_ID      # WRITE: confirm first
 ```sh
 glab release list
 glab release view TAG
-glab release create TAG --notes N   # WRITE: confirm first
+glab release create TAG --notes N   # HIGH-RISK: confirm
 ```
 
 ## Tips

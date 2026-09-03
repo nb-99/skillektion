@@ -25,7 +25,7 @@ small, localized fix unless the user requests it.
 1. Treat the approved proposal, specification deltas, design, and tasks as the
    implementation contract.
 2. Implement tasks incrementally and run the narrowest relevant validation
-   after each meaningful change.
+   after completing each independently testable behavior or invariant.
 3. Keep the proposal and task status accurate when implementation changes the
    agreed scope. Ask before materially changing the plan.
 

@@ -1,7 +1,7 @@
 # Engineering Rules
 
-For every code modification, apply the relevant rules before editing and again
-before declaring completion:
+At the start of a code modification, select the relevant rules and apply them
+throughout the work:
 
 - Minimize reader load: prefer direct code, small mutable scope, and answers
   close to the question they resolve.
@@ -18,4 +18,6 @@ before declaring completion:
   its maintenance cost.
 - Encode recurring lessons in types, tests, validation, automation, or focused
   instructions instead of relying on reminders.
-- Verify the real artifact or runtime behavior and report remaining uncertainty.
+- Use the narrowest executable check that exercises changed behavior. Inspect
+  the resulting artifact for prose or non-executable metadata. Avoid unrelated
+  suites and duplicate generic final checks; report remaining uncertainty.
