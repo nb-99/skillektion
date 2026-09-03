@@ -24,6 +24,10 @@ about its content.
 
 ## Writing / mutating
 
-- Always ask for explicit confirmation before any write action (creating or
-  editing pages, comments).
-- Present the exact change first, then wait for a yes.
+- An explicit user request that names the Confluence target and a bounded write
+  action authorizes that action.
+- Otherwise, present the exact change and ask for confirmation before writing.
+- Always confirm immediately before destructive, irreversible,
+  privilege-changing, or materially broader work, including deletion, moving
+  page trees, access changes, and bulk edits.
+- Recheck the space, page id, and mutation before applying it.

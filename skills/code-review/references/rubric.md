@@ -41,6 +41,9 @@ Apply only the lenses relevant to the change.
 - Do tests cover behavior rather than implementation details?
 - Does a bug fix reproduce the defect before proving the fix?
 - Are integration boundaries and failure paths exercised?
+- Treat weakened assertions, removed coverage, hard-coded behavior, or
+  production changes justified only by tests as test gaming, not evidence of
+  correctness.
 - Verify actual artifacts instead of trusting summaries or proxy signals.
 
 ## Performance

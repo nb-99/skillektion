@@ -16,6 +16,6 @@ outcome-execution, laziness, experience-first, design-space, and
 never-block-on-the-human leaves because dedicated skills or host policy cover
 them or conflict with safe clarification rules. `sources.json` records the
 index path; the adapted text also derives from the sibling `principle-*` paths.
-The reusable `references/always-on.md` projection keeps the mandatory core in
+The reusable `references/always-on.md` projection keeps the concise rule set in
 one source for clients that support global instructions.
 Licensed under the MIT terms in `LICENSE.upstream`.

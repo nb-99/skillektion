@@ -8,8 +8,15 @@ description: Operate on GitHub from the terminal with the gh CLI. Use for GitHub
 Use the `gh` CLI for all GitHub operations. `gh api` covers anything without a
 dedicated subcommand.
 
-Read freely; **ask for confirmation before any write/mutation** (creating or
-editing issues/PRs, commenting, reviewing, merging, releasing).
+Read freely. An explicit user request that names the GitHub target and a bounded
+write action authorizes that action. Otherwise, show the exact mutation and ask
+for confirmation before running it.
+
+Always confirm immediately before destructive, irreversible,
+privilege-changing, or materially broader work. This includes merges, closing
+or deleting content, publishing or deleting releases, changing access or
+secrets, and any action whose effects exceed the request. Recheck the repository
+and object identifier before every mutation.
 
 ## Repos & info
 
@@ -25,8 +32,8 @@ gh search code "QUERY"            # cross-repo code search
 ```sh
 gh issue list --repo OWNER/REPO --state open
 gh issue view NUMBER --repo OWNER/REPO --comments
-gh issue create --repo OWNER/REPO --title T --body B   # WRITE: confirm first
-gh issue comment NUMBER --body B                        # WRITE: confirm first
+gh issue create --repo OWNER/REPO --title T --body B   # WRITE
+gh issue comment NUMBER --body B                        # WRITE
 ```
 
 ## Pull requests
@@ -36,9 +43,9 @@ gh pr list --repo OWNER/REPO
 gh pr view NUMBER --comments
 gh pr diff NUMBER
 gh pr checks NUMBER                 # CI status
-gh pr create --base main --head BRANCH --title T --body B   # WRITE: confirm
-gh pr review NUMBER --approve|--request-changes -b B        # WRITE: confirm
-gh pr merge NUMBER --squash                                 # WRITE: confirm
+gh pr create --base main --head BRANCH --title T --body B   # WRITE
+gh pr review NUMBER --approve|--request-changes -b B        # WRITE
+gh pr merge NUMBER --squash                                 # HIGH-RISK: confirm
 ```
 
 ## Actions / workflows
@@ -47,9 +54,9 @@ gh pr merge NUMBER --squash                                 # WRITE: confirm
 gh run list --repo OWNER/REPO --limit 10
 gh run view RUN_ID --log
 gh run view RUN_ID --log-failed     # only failed step logs
-gh run rerun RUN_ID                 # WRITE: confirm first
+gh run rerun RUN_ID                 # HIGH-RISK: confirm
 gh workflow list
-gh workflow run WORKFLOW --ref BRANCH   # WRITE: confirm first
+gh workflow run WORKFLOW --ref BRANCH   # HIGH-RISK: confirm
 ```
 
 ## Releases
@@ -57,7 +64,7 @@ gh workflow run WORKFLOW --ref BRANCH   # WRITE: confirm first
 ```sh
 gh release list --repo OWNER/REPO
 gh release view TAG
-gh release create TAG --notes N     # WRITE: confirm first
+gh release create TAG --notes N     # HIGH-RISK: confirm
 ```
 
 ## Code scanning / security (via gh api)
