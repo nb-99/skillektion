@@ -1,3 +1,5 @@
 interface:
   display_name: "Why"
   short_description: "Investigate historical design rationale"
+policy:
+  allow_implicit_invocation: false

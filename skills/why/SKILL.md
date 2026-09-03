@@ -1,6 +1,7 @@
 ---
 name: why
 description: Investigate why code or a design has its current shape using source history and available organizational evidence. Use for rationale, trade-offs, regressions, postmortems, thresholds, and historical design questions.
+disable-model-invocation: true
 ---
 
 # Why

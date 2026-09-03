@@ -1,6 +1,7 @@
 ---
 name: how
 description: Explain how code, a feature flow, or a subsystem works and where its responsibilities belong. Use for code walkthroughs, architecture onboarding, runtime traces, ownership questions, and architecture critique.
+disable-model-invocation: true
 ---
 
 # How

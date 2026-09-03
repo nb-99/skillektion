@@ -3,7 +3,7 @@
 Adapted from the inline principles index in `pstack/skills/poteto-mode` and the
 corresponding `pstack/skills/principle-*/SKILL.md` leaves in
 [`cursor/plugins`](https://github.com/cursor/plugins) at commit
-`60c641e4fad674784b30abcf9f8915dea39df38d`.
+`7314f723a487ec406b6369fe5865ba034cfed166`.
 
 Pstack registers 21 principle leaves with model invocation disabled. Its
 `poteto-mode` reads an inline index for multi-step tasks, then loads only the
