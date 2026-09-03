@@ -1,0 +1,47 @@
+skills/technical-writing/SOURCE.md
+  s_0aef1140b40b47::t_86f2101f825474 5
+skills/how/agents/openai.yaml
+  s_0aef1140b40b47::t_86f2101f825474 4-5
+skills/engineering-principles/SOURCE.md
+  s_0aef1140b40b47::t_86f2101f825474 6
+sources.json
+  s_0aef1140b40b47::t_86f2101f825474 7,18,29,40,63,73,99,109,119,129,140,199,209,219,229,240,251,261,271,281,291,301,312
+skills/bro/SOURCE.md
+  s_0aef1140b40b47::t_86f2101f825474 5
+skills/code-review/SOURCE.md
+  s_0aef1140b40b47::t_86f2101f825474 7
+skills/skill-miner/SOURCE.md
+  s_0aef1140b40b47::t_86f2101f825474 5
+skills/why/agents/openai.yaml
+  s_0aef1140b40b47::t_86f2101f825474 4-5
+skills/why/SOURCE.md
+  s_0aef1140b40b47::t_86f2101f825474 5,9-11
+skills/grilling/SKILL.md
+  s_0aef1140b40b47::t_a8a6192205fec7 10,14-19
+skills/unslop/SKILL.md
+  s_0aef1140b40b47::t_a8a6192205fec7 4
+skills/how/SOURCE.md
+  s_0aef1140b40b47::t_86f2101f825474 5,9-11
+skills/blast-radius/SOURCE.md
+  s_0aef1140b40b47::t_86f2101f825474 5
+skills/how/SKILL.md
+  s_0aef1140b40b47::t_86f2101f825474 4
+skills/why/SKILL.md
+  s_0aef1140b40b47::t_86f2101f825474 4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.1",
+  "base_commit_sha": "3c18aa5a5aa8070712c37156d1ffd4ced64289e5",
+  "prompts": {},
+  "sessions": {
+    "s_0aef1140b40b47": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f98c2c8b2ffeC7qrhR3XswWf4Z",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Niklas Beilmann <niklas.beilmann@telekom.de>"
+    }
+  }
+}
