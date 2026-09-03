@@ -1,0 +1,58 @@
+skills/confluence-workflow/SKILL.md
+  s_80f53818b04f52::t_c537197d93c8ed 27-33
+skills/code-review/references/rubric.md
+  s_0aef1140b40b47::t_6e1d69dd8af354 44-46
+skills/glab-cli/SKILL.md
+  s_80f53818b04f52::t_c537197d93c8ed 11-19,33-34,43-45,63
+  s_0aef1140b40b47::t_305c19ff83f0de 55
+skills/forgejo-cli/SKILL.md
+  s_80f53818b04f52::t_c537197d93c8ed 15-24,96,227
+skills/openspec-workflow/SKILL.md
+  s_b38ac15946d3df::t_cd9120db0e1d98 28
+skills/git-working-agreement/SKILL.md
+  s_0aef1140b40b47::t_305c19ff83f0de 21-22
+  s_80f53818b04f52::t_c537197d93c8ed 10-16,20
+skills/engineering-principles/SKILL.md
+  s_b38ac15946d3df::t_945ff0eca907c0 12-13,76-80,84-86
+skills/gh-cli/SKILL.md
+  s_80f53818b04f52::t_c537197d93c8ed 11-19,35-36,46-48,67
+  s_0aef1140b40b47::t_305c19ff83f0de 57,59
+skills/jira-workflow/SKILL.md
+  s_80f53818b04f52::t_c537197d93c8ed 13-19,23-29
+skills/engineering-principles/references/always-on.md
+  s_b38ac15946d3df::t_945ff0eca907c0 3-4,21-23
+skills/engineering-principles/SOURCE.md
+  s_b38ac15946d3df::t_945ff0eca907c0 19
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.1",
+  "base_commit_sha": "56ff24195091c795fbc0a369d4cb8265195758e4",
+  "prompts": {},
+  "sessions": {
+    "s_0aef1140b40b47": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f98c2c8b2ffeC7qrhR3XswWf4Z",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Niklas Beilmann <niklas.beilmann@telekom.de>"
+    },
+    "s_80f53818b04f52": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f98849e4bffenk2CBZ7KQAsuhJ",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Niklas Beilmann <niklas.beilmann@telekom.de>"
+    },
+    "s_b38ac15946d3df": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f98849e7dffe6xS23eWTxjW5Rl",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Niklas Beilmann <niklas.beilmann@telekom.de>"
+    }
+  }
+}
