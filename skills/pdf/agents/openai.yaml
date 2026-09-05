@@ -1,0 +1,3 @@
+interface:
+  display_name: "PDF Toolkit"
+  short_description: "Read, fill, merge, and generate PDFs"
