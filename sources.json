@@ -81,6 +81,16 @@
     "forgejo-cli": {
       "mode": "owned"
     },
+    "frontend-design": {
+      "mode": "mirror",
+      "repository": "https://github.com/anthropics/skills",
+      "revision": "41bbe19d1a1a7eaab5e7bb9050a417e5c6cffc8f",
+      "path": "skills/frontend-design",
+      "license": {
+        "spdx": "Apache-2.0",
+        "path": "skills/frontend-design/LICENSE.txt"
+      }
+    },
     "gh-cli": {
       "mode": "owned"
     },
@@ -243,6 +253,17 @@
       "license": {
         "spdx": "MIT",
         "path": "pstack/LICENSE"
+      }
+    },
+    "theme-factory": {
+      "mode": "adapted",
+      "repository": "https://github.com/anthropics/skills",
+      "revision": "41bbe19d1a1a7eaab5e7bb9050a417e5c6cffc8f",
+      "path": "skills/theme-factory",
+      "notes": "Makes the showcase step environment-agnostic so agents that cannot display PDF files summarize the theme definitions instead, fixes typos in the description and intro, and adds manual-only invocation metadata. Theme definitions and the showcase PDF are unchanged.",
+      "license": {
+        "spdx": "Apache-2.0",
+        "path": "skills/theme-factory/LICENSE.txt"
       }
     },
     "to-spec": {

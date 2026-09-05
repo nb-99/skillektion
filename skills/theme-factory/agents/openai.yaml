@@ -1,0 +1,5 @@
+interface:
+  display_name: "Theme Factory"
+  short_description: "Apply color and font themes to artifacts"
+policy:
+  allow_implicit_invocation: false
