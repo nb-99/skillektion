@@ -1,0 +1,3 @@
+interface:
+  display_name: "Word documents (.docx)"
+  short_description: "Create, redline, and verify .docx files"

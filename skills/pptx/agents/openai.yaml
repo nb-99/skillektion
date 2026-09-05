@@ -1,0 +1,3 @@
+interface:
+  display_name: "PowerPoint (pptx)"
+  short_description: "Create, edit, and verify .pptx decks"

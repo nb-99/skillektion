@@ -57,6 +57,9 @@
         "path": "LICENSE"
       }
     },
+    "docx": {
+      "mode": "owned"
+    },
     "domain-modeling": {
       "mode": "mirror",
       "repository": "https://github.com/mattpocock/skills",
@@ -203,6 +206,12 @@
     "openspec-workflow": {
       "mode": "owned"
     },
+    "pdf": {
+      "mode": "owned"
+    },
+    "pptx": {
+      "mode": "owned"
+    },
     "prototype": {
       "mode": "mirror",
       "repository": "https://github.com/mattpocock/skills",
@@ -336,6 +345,9 @@
         "spdx": "MIT",
         "path": "LICENSE"
       }
+    },
+    "xlsx": {
+      "mode": "owned"
     }
   }
 }
