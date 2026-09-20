@@ -308,7 +308,7 @@
     "unslop": {
       "mode": "mirror",
       "repository": "https://github.com/cursor/plugins",
-      "revision": "7314f723a487ec406b6369fe5865ba034cfed166",
+      "revision": "e8d856f0273b42ebafe0ec3546bd645709e7c1b0",
       "path": "pstack/skills/unslop",
       "license": {
         "spdx": "MIT",
