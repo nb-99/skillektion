@@ -47,6 +47,9 @@
     "confluence-workflow": {
       "mode": "owned"
     },
+    "creating-a-pr-mr": {
+      "mode": "owned"
+    },
     "defuddle": {
       "mode": "mirror",
       "repository": "https://github.com/kepano/obsidian-skills",
