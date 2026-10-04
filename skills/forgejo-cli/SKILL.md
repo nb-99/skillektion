@@ -3,14 +3,9 @@ name: forgejo-cli
 description: Use fj and fgj for everyday Forgejo issues, pull requests, Actions, tags, releases, and wiki workflows.
 ---
 
-# Forgejo CLI Tools
+# Forgejo CLI tools
 
-Two complementary CLIs are available:
-
-- `fj`: Forgejo-native workflows, especially wiki Git operations, tags, repository settings, organizations, teams, and AGit pull requests.
-- `fgj`: Actions run inspection and logs, JSON output, and generic authenticated Forgejo API access.
-
-Both tools infer the repository from the current Git checkout where possible. Use an explicit repository or remote when working outside a checkout or when multiple remotes exist.
+## Authorization
 
 Read freely. An explicit user request that names the Forgejo target and a
 bounded write action authorizes that action. Otherwise, show the exact mutation
@@ -22,7 +17,46 @@ closing pull requests, deleting content or tags, publishing or deleting
 releases, cancelling runs, changing repository access, settings, variables, or
 secrets, rewriting history, and any action whose effects exceed the request.
 
-## Which Tool To Use
+## Common commands
+
+Prefer `fj --style minimal` for normal operations and `fgj` for structured output.
+Replace `HOST/OWNER/REPO`, `PR`, `ISSUE`, and `QUERY` with your target values.
+Commands without explicit targeting infer the repository from the checkout:
+
+```sh
+fj --style minimal pr view PR body
+fj --style minimal pr view PR diff
+fj --style minimal pr status PR
+fj --style minimal pr status PR --wait
+fj --style minimal issue view --remote origin ISSUE
+fj --style minimal issue search --repo HOST/OWNER/REPO --state all 'QUERY'
+```
+
+Run independent reads in parallel. When the harness supports background commands
+with completion notifications, run `status --wait` in the background and await
+completion without polling. Distinguish pending policy gates from CI checks and
+merge conflicts. A pending policy gate does not by itself indicate broken CI.
+
+Search existing issues before creating one. With explicit authorization for the
+target and issue creation, use an absolute body-file path, then read the created
+issue back once:
+
+```sh
+fj --style minimal issue create --repo HOST/OWNER/REPO 'Issue title' --body-file /absolute/path/issue.md
+```
+
+Only after successful required checks, verification of mergeability, and
+immediate confirmation of the merge, use the rebase form:
+
+```sh
+fj --style minimal pr merge PR --method rebase
+```
+
+## Tool choice and targeting
+
+Both tools infer the repository from the checkout where possible. Use
+`--repo HOST/OWNER/REPO` or `--remote NAME` with `fj`; with `fgj`, prefer
+`--hostname HOST -R OWNER/REPO` to make the server explicit.
 
 | Task                                          | Use                   | Command family                       |
 | --------------------------------------------- | --------------------- | ------------------------------------ |
@@ -31,28 +65,28 @@ secrets, rewriting history, and any action whose effects exceed the request.
 | Tags                                          | `fj`                  | `fj tag`                             |
 | Releases and release assets                   | `fj`                  | `fj release`                         |
 | Actions run list and dispatch                 | Either                | `fj actions`, `fgj actions`          |
-| Actions jobs, logs, watch, rerun, cancel      | `fgj`                 | `fgj actions run`                    |
+| Actions jobs, logs, watch, rerun, cancel        | `fgj`                 | `fgj actions run`                    |
 | Machine-readable list/view output             | `fgj`                 | `--json`                             |
-| Unsupported Forgejo API operation             | `fgj`                 | `fgj api`                            |
 | Users, organizations, teams, repository units | `fj` for dedicated UX | `fj user`, `fj org`, `fj repo units` |
 | AGit pull requests                            | `fj`                  | `fj pr create --agit`                |
 
-`fgj api` can usually reach the same server-side API operations as `fj`, but it does not provide the same dedicated workflow. Prefer `fj` for its typed Forgejo-specific commands and `fgj` when it has a better dedicated command or when direct API access is needed.
-
-Use `fj <command> --help` or `fgj <command> --help` when unsure about a flag. Do not assume output formats are stable unless using `fgj --json`.
+Use command help when unsure about a flag. Before an API fallback, check
+`fgj --help` once for an `api` subcommand. If the installed help lacks it, use a
+supported dedicated command or another authenticated read-only path if needed.
+Minimal text is not a stable machine-readable format; inspect the JSON shape
+before selecting fields.
 
 ## Issues
 
 Use `fj` for issue workflows:
 
 ```sh
-fj issue search --repo HOST/OWNER/REPO "query"
+fj issue search --repo HOST/OWNER/REPO "QUERY"
 fj issue search --repo HOST/OWNER/REPO --state all
 fj issue search --repo HOST/OWNER/REPO --labels bug --assignee USERNAME
 fj issue view --remote origin ISSUE
 fj issue view --remote origin ISSUE comments
 fj issue create --remote origin "Issue title" --body "Issue description"
-fj issue create --repo HOST/OWNER/REPO "Issue title" --body-file issue.md
 fj issue comment --remote origin ISSUE "Additional context"
 fj issue assign --remote origin ISSUE USERNAME
 fj issue edit --remote origin ISSUE title "Updated title"
@@ -63,33 +97,29 @@ fj issue close --remote origin ISSUE --with-msg "Closing because ..."
 
 Omit `--body` or the positional body to edit content in the configured editor. Use `--body-file FILE` for longer text.
 
-For JSON or an issue operation not covered by the dedicated command, use `fgj`:
+For JSON, use `fgj`. Issue views wrap the object in `issue`, rather than returning
+bare issue fields. Verify the shape for your installed version:
 
 ```sh
-fgj issue list -R HOST/OWNER/REPO --json
-fgj issue view ISSUE -R HOST/OWNER/REPO --json
+fgj issue list --hostname HOST -R OWNER/REPO --json
+fgj issue view ISSUE --hostname HOST -R OWNER/REPO --json | jq '.issue | {title, updated_at, body}'
 ```
 
-## Pull Requests
+## Pull requests
 
 Use `fj` for normal Forgejo pull request workflows:
 
 ```sh
 fj pr search --repo HOST/OWNER/REPO
-fj pr search --repo HOST/OWNER/REPO --state all "query"
+fj pr search --repo HOST/OWNER/REPO --state all "QUERY"
 fj pr view PR
-fj pr view PR body
-fj pr view PR diff
 fj pr view PR files
 fj pr view PR commits
-fj pr status PR
-fj pr status PR --wait
 fj pr create --repo HOST/OWNER/REPO \
   --base main --head feature/example \
   "Describe the change" --body-file pr-body.md
 fj pr comment PR "Review comment"
 fj pr checkout PR --branch-name review-PR
-fj pr merge PR --method squash
 fj pr close PR --with-msg "Closing because ..."
 ```
 
@@ -98,8 +128,8 @@ Prefix the title with `WIP: ` to create a draft PR. `--autofill` derives the tit
 Use `fgj` when JSON output or a `fgj`-specific PR feature is more useful:
 
 ```sh
-fgj pr list -R HOST/OWNER/REPO --json
-fgj pr view PR -R HOST/OWNER/REPO --json
+fgj pr list --hostname HOST -R OWNER/REPO --json
+fgj pr view PR --hostname HOST -R OWNER/REPO --json
 ```
 
 ## Forgejo Actions
@@ -113,10 +143,12 @@ fj actions dispatch --repo HOST/OWNER/REPO WORKFLOW.yml REF
 fj actions dispatch --remote origin WORKFLOW.yml main --inputs key=value
 ```
 
-Use `fgj` for detailed run inspection. It supports workflow runs, job details, logs, watching, rerunning, and cancellation:
+Use `fgj` for detailed run inspection. Filter JSON in the initial command rather
+than dumping the full run history. Run and PR lists are arrays; verify the shape
+for your installed version:
 
 ```sh
-fgj actions run list -R HOST/OWNER/REPO
+fgj actions run list --hostname HOST -R OWNER/REPO --json | jq '[.[] | select(.workflow_id == "WORKFLOW.yml")][0:4]'
 fgj actions run view RUN --verbose
 fgj actions run view RUN --log
 fgj actions run view RUN --job JOB --log
@@ -125,12 +157,18 @@ fgj actions run rerun RUN
 fgj actions run cancel RUN
 ```
 
-`fj` does not currently provide a command for viewing a run's jobs, step output, or logs. Use `fgj` for those operations rather than the Forgejo web UI or a raw API request.
+Use the API run ID returned in metadata, not the repository run index or display
+number. A run's API ID and repository display index can differ and are not
+interchangeable command arguments. Job IDs identify jobs.
+
+If fetching job logs returns HTTP 404, stop equivalent requests and report the
+logs unavailable through that path. Metadata may still be available through
+`--verbose`; use another read-only path only if needed. A log-fetch failure does
+not prove that all versions lack log support.
 
 Use `fgj` for structured Actions data and broader workflow management:
 
 ```sh
-fgj actions run list --json
 fgj actions workflow list
 fgj actions workflow view WORKFLOW.yml
 fgj actions workflow run WORKFLOW.yml -r REF -f key=value
@@ -144,8 +182,8 @@ Use `fj` or `fgj` to list Actions configuration. Check the installed help before
 ```sh
 fj actions variables list --repo HOST/OWNER/REPO
 fj actions secrets list --repo HOST/OWNER/REPO
-fgj actions secret list -R HOST/OWNER/REPO
-fgj actions variable list -R HOST/OWNER/REPO
+fgj actions secret list --hostname HOST -R OWNER/REPO
+fgj actions variable list --hostname HOST -R OWNER/REPO
 ```
 
 Never print, paste, or place secret values in command history, logs, Git, or chat.
@@ -161,11 +199,8 @@ fj tag create --repo HOST/OWNER/REPO TAG --branch BRANCH
 fj tag create --repo HOST/OWNER/REPO TAG --body "Annotated tag message"
 ```
 
-`fgj` has no dedicated tag command. Use its API passthrough when JSON or scripting is needed:
-
-```sh
-fgj api repos/OWNER/REPO/tags
-```
+Prefer `fj` for tags. If the installed `fgj` help lacks a dedicated tag command,
+use an API fallback only after the capability check above.
 
 Use `fj tag delete --help` before deleting a tag. Tag changes may trigger workflows and alter repository history.
 
@@ -187,10 +222,10 @@ fj release create --repo HOST/OWNER/REPO RELEASE \
 `fgj` supports common release listing, viewing, creating, and uploading, with JSON support:
 
 ```sh
-fgj release list -R HOST/OWNER/REPO --json
-fgj release view RELEASE -R HOST/OWNER/REPO --json
-fgj release create RELEASE -R HOST/OWNER/REPO -t TAG -n "Release notes"
-fgj release upload RELEASE -R HOST/OWNER/REPO dist/artifact.tar.gz
+fgj release list --hostname HOST -R OWNER/REPO --json
+fgj release view RELEASE --hostname HOST -R OWNER/REPO --json
+fgj release create RELEASE --hostname HOST -R OWNER/REPO -t TAG -n "Release notes"
+fgj release upload RELEASE --hostname HOST -R OWNER/REPO dist/artifact.tar.gz
 ```
 
 Use `--draft` or `--prerelease` as appropriate. Inspect `fj release edit`, `fj release delete`, `fj release asset --help`, or the corresponding `fgj` help before changing or removing an existing release.
@@ -206,25 +241,15 @@ fj wiki clone --repo HOST/OWNER/REPO --path ./REPO-wiki
 fj wiki clone --repo HOST/OWNER/REPO --ssh --path ./REPO-wiki
 ```
 
-Edit pages in the cloned Git repository, then commit and push with Git. `fgj` has no dedicated wiki command; its API passthrough does not replace the wiki Git workflow.
+Edit pages in the cloned Git repository, then commit and push with Git. If the
+installed `fgj` help lacks a dedicated wiki command, use `fj`. An API fallback
+does not replace the wiki Git workflow.
 
-## API And JSON
-
-Use `fgj` when a dedicated command is missing or when output must be machine-readable:
-
-```sh
-fgj repo view HOST/OWNER/REPO --json
-fgj actions run list -R HOST/OWNER/REPO --json
-fgj api repos/OWNER/REPO/commits/SHA/status | jq
-```
-
-`fgj api` is an authenticated Forgejo REST API passthrough. Use the Forgejo API documentation for endpoint and permission details. Treat API mutations with the same care as dedicated mutating commands.
-
-## Targeting And Safety
+## Targeting and safety
 
 - Prefer explicit `--repo HOST/OWNER/REPO` or `--remote NAME` when multiple remotes or repositories are in play.
 - Use read-only commands such as search, view, status, list, and contents before mutating commands.
 - Recheck the repository, branch, issue/PR number, run ID, job ID, tag, or release name before remote changes.
 - Treat merge, close, tag, release, dispatch, rerun, cancel, delete, and Actions configuration commands as mutating operations.
+- Treat API mutations with the same authorization rules as dedicated commands.
 - Never expose credentials, private keys, or Actions secret values in arguments, output, files, or chat.
-- Use `--style minimal` with `fj` for cleaner piped output, but do not treat it as a stable machine-readable format.
