@@ -15,6 +15,9 @@ Investigate intent as a historical question. Code proves mechanics, not motive.
   links, incidents, dashboards, or comments.
 - Label uncited claims as inference.
 - Surface contradictions and competing hypotheses.
+- Treat the user's suggested rationale as a hypothesis to test, not a conclusion
+  to confirm. Seek evidence for and against it, and report when the record does
+  not support it.
 - State unavailable sources and unanswered questions.
 - Match wording to confidence; reserve "because" for direct evidence.
 
@@ -29,9 +32,10 @@ Investigate intent as a historical question. Code proves mechanics, not motive.
 4. Search every available and relevant category. Use one narrowly scoped
    read-only investigator per category when parallel delegation is available;
    otherwise search sequentially. Record queries and null results.
-5. Give investigators the same code anchor and question. Require direct
-   evidence, indirect evidence, contradictions, gaps, and leads. They must not
-   mutate external systems.
+5. Give investigators the same code anchor and question. Present any user-suggested
+   rationale as one candidate and require evidence for and against it. Require
+   direct evidence, indirect evidence, contradictions, gaps, and leads. They
+   must not mutate external systems.
 6. Verify high-value citations and synthesize without strengthening confidence
    language.
 

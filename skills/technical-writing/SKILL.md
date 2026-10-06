@@ -46,6 +46,13 @@ Keep one primary mode per document; split and link when modes conflict.
 - Use one name for each thing throughout the document.
 - Prefer periods to punctuation that hides multiple thoughts in one sentence.
 
+## Keep pull requests easy to review
+
+Write the pull-request body as a concise briefing. Keep the problem, change,
+verification results, and material risks inline. Link bulky logs, commit lists,
+and supporting measurements instead of copying them into the body. Include a
+small table when it helps the reviewer decide; keep necessary evidence visible.
+
 ## Review
 
 1. Does the document have one primary mode?
@@ -56,6 +63,8 @@ Keep one primary mode per document; split and link when modes conflict.
 6. Does each concept keep one name?
 7. Are symbols, paths, commands, counts, and output examples true now?
 8. Does the tone fit the repository and intended reader?
+9. For pull-request bodies, are the problem, change, verification, and material
+   risks inline, with bulky supporting evidence linked?
 
 Use `unslop`, when available, as an optional final style pass only when its
 opinionated house style fits the requested voice. The work is complete when
