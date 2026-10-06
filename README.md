@@ -92,3 +92,14 @@ To update a mirror, change its `revision`, run `npm run sync`, and review the
 resulting diff. To update an adapted skill, compare it with the newer upstream
 revision, incorporate the relevant changes directly, and then update the
 recorded revision.
+
+Check tracked upstream skill directories and licenses against their repository's
+default branch:
+
+```sh
+npm run upstream:diff
+```
+
+The checker writes changed-source patches to `scratch/upstream-diffs/`. For
+adaptations derived from additional upstream directories, review those paths
+separately as documented in the skill's `SOURCE.md`.

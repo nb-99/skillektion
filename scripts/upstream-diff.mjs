@@ -1,4 +1,4 @@
-import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import { spawnSync } from "node:child_process";
 import { tmpdir } from "node:os";
 import path from "node:path";
@@ -17,8 +17,10 @@ const temporaryRoot = await mkdtemp(
 );
 
 await mkdir(outputDir, { recursive: true });
-for (const [index, [name]] of sources.entries()) {
-  await rm(path.join(outputDir, filename(index, name)), { force: true });
+for (const entry of await readdir(outputDir, { withFileTypes: true })) {
+  if (entry.isFile() && /^\d+-[a-z0-9]+(?:-[a-z0-9]+)*\.diff$/.test(entry.name)) {
+    await rm(path.join(outputDir, entry.name));
+  }
 }
 
 let changed = 0;
@@ -54,6 +56,7 @@ try {
       checkout,
       "diff",
       "--no-ext-diff",
+      "--exit-code",
       "--binary",
       "--unified=3",
       source.revision,
