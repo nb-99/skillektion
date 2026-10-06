@@ -1,6 +1,6 @@
 ---
 name: engineering-principles
-description: Apply a compact set of engineering principles to substantial design, migration, operations, concurrency, and maintenance decisions. Use when modifying code or when a task needs a named decision rule beyond ordinary implementation guidance.
+description: Apply conditional engineering principles to code changes, test writing or review, performance testing already in scope, and substantial design, migration, operations, concurrency, or maintenance decisions.
 ---
 
 # Engineering Principles
@@ -70,6 +70,32 @@ Use when the same correction or failure recurs. Prefer an enforceable type,
 test, lint, validation rule, script, repository instruction, or focused skill
 over another reminder. Route historical rationale to the project's established
 documentation or memory system.
+
+### Test Behavior, Not Implementation
+
+Use when writing, changing, or reviewing tests. Exercise the interface callers
+use and assert observable results, errors, state changes, or side effects.
+Choose expectations from specified behavior, reviewed reference outputs, or
+explicit contracts, rather than computing them by calling or reimplementing
+the code under test. Prefer assertions that fail for a relevant defect over
+checks of private calls or duplicated internals.
+
+For mocked dependencies, check meaningful payloads or resulting effects. Assert
+call counts when the count itself is the contract, such as a retry limit or
+at-most-once delivery. Keep legitimate tests, including negative, property-based,
+compile-time, contract, reviewed snapshot, and characterization tests, when they
+protect behavior or an explicit contract.
+
+### Validate Performance Measurements
+
+Use only while conducting performance tests or benchmarks already in scope.
+This principle validates those measurements; it does not initiate benchmarking
+for ordinary implementation, design ideas, or suspected performance effects.
+
+Confirm the intended work ran successfully. Rule out errors, cached or skipped
+work, unequal comparison settings, and run-to-run noise. Record the workload,
+settings, run count, and spread with the result. Support bottleneck claims with
+profiles or system counters from the measured run, not guesses from the code.
 
 ### Prove It Works
 
