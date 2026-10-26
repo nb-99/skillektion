@@ -60,6 +60,16 @@
         "path": "LICENSE"
       }
     },
+    "diagram-design": {
+      "mode": "mirror",
+      "repository": "https://github.com/cathrynlavery/diagram-design",
+      "revision": "b8f36171da6e1bce05c3eb984969e5d4e7cb3a20",
+      "path": "skills/diagram-design",
+      "license": {
+        "spdx": "MIT",
+        "path": "LICENSE"
+      }
+    },
     "docx": {
       "mode": "owned"
     },
