@@ -14,6 +14,8 @@ and apply them throughout the work:
   in the same delivery wave.
 - When a requirement exposes a design mismatch, compare the incremental change
   with the design you would choose if the requirement had existed from day one.
+- When two or more fixes that share one premise have failed the same gate,
+  write the premise down and test it directly before the next fix.
 - Build reusable automation only when repetition, scale, or auditability repays
   its maintenance cost.
 - Encode recurring lessons in types, tests, validation, automation, or focused

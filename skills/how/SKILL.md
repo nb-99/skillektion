@@ -1,6 +1,6 @@
 ---
 name: how
-description: Explain how code, a feature flow, or a subsystem works and where its responsibilities belong. Use for code walkthroughs, architecture onboarding, runtime traces, ownership questions, and architecture critique.
+description: Explain how code, a feature flow, or a subsystem works. Use for code walkthroughs, architecture onboarding, runtime traces, and ownership or placement questions.
 disable-model-invocation: true
 ---
 
@@ -34,24 +34,8 @@ Synthesize the evidence into only the sections the question needs:
 - **Gotchas:** surprising behavior, sharp edges, and unresolved questions.
 
 Cite specific files and symbols. Use a diagram only when it reduces explanation
-cost. Mark inferred behavior and evidence gaps.
+cost. Mark inferred behavior and evidence gaps. For architectural problems or
+improvements, use the `code-review` or `codebase-design` skills instead; this
+skill explains, it does not judge.
 
-## Critique
-
-When the user asks for architectural problems or improvements, explain the
-system first. Then use independent read-only critique passes when available.
-Give each pass the same explanation, paths, and question. Ask each pass to find
-incorrect boundaries, hidden coupling, confused ownership, fragile data flow,
-and unnecessary complexity. Require a reachable impact, code evidence, and the
-smallest useful improvement for every proposed issue.
-
-Verify proposed issues against the code and classify them as:
-
-- **Act on:** concrete problems worth fixing now.
-- **Consider:** real concern with uncertain cost or priority.
-- **Noted:** valid but low-priority observation.
-- **Dismissed:** incorrect, missing context, or preference without impact.
-
-Present the standalone explanation before the critique. The task is complete
-when the requested flow can be traced without hand-waving and every critique
-finding is verified or dismissed with a reason.
+The task is complete when the requested flow can be traced without hand-waving.

@@ -58,6 +58,15 @@ Use when a new requirement exposes a mismatch in the existing design. Ask what
 the structure would be if the requirement had existed from day one, then compare
 that design with an incremental change before choosing.
 
+### Attack The Premise
+
+Use when two or more fixes that share one premise have failed the same gate.
+Write the premise down — the one sentence every failed fix assumed — and test it
+directly before writing another fix that assumes it. Choose an observation that
+would come out differently if the premise were false, and look at how the
+failures are distributed, not only at how large they are. Follow the evidence:
+if it contradicts the premise, the cause is elsewhere.
+
 ### Build The Lever
 
 Use when repeatability, scale, or auditability justifies a reusable script,

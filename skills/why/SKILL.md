@@ -7,6 +7,8 @@ disable-model-invocation: true
 # Why
 
 Investigate intent as a historical question. Code proves mechanics, not motive.
+The companion `how` skill answers what the code does and how it works; `why`
+answers what forces led to its shape.
 
 ## Evidence Rules
 
@@ -24,14 +26,24 @@ Investigate intent as a historical question. Code proves mechanics, not motive.
 ## Process
 
 1. Identify the target, question, files, line ranges, and key symbols.
-2. Build a code anchor with blame and history through renames. Extract related
-   commits, pull requests, ticket IDs, comments, and tests.
+2. Build the code anchor inline before any delegation. Collect file paths and
+   line ranges, key symbols, the last commits touching the target, pull-request
+   numbers from merge commits, and linked ticket IDs. Concrete commands:
+   `git blame -L <start>,<end> <file>` for last-touch commits,
+   `git log --follow -p -- <file>` for history with patches through renames,
+   `git log --oneline -20 -- <file>` for recent commits with pull-request
+   numbers visible, and `git log -1 --format=%B <commit>` to extract them. Pull
+   the bodies and discussion of substantive pull requests with the repository
+   host CLI. Give this anchor to every investigator and to the synthesis step.
 3. Discover evidence sources available in the current environment. Consider:
    source control, issue trackers, long-form documents, team chat,
    observability, error tracking, analytics, and incident records.
-4. Search every available and relevant category. Use one narrowly scoped
-   read-only investigator per category when parallel delegation is available;
-   otherwise search sequentially. Record queries and null results.
+4. Search every available and relevant category. Use one investigator per
+   category when parallel delegation is available; otherwise search
+   sequentially. Run investigators with full tool access rather than a
+   restricted read-only mode, because restricted modes can strip MCP and
+   specialized tools the search needs; investigators must not write to the
+   repository or mutate external systems. Record queries and null results.
 5. Give investigators the same code anchor and question. Present any user-suggested
    rationale as one candidate and require evidence for and against it. Require
    direct evidence, indirect evidence, contradictions, gaps, and leads. They

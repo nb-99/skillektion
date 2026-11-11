@@ -4,7 +4,7 @@
     "blast-radius": {
       "mode": "adapted",
       "repository": "https://github.com/cursor/plugins",
-      "revision": "7314f723a487ec406b6369fe5865ba034cfed166",
+      "revision": "5866df557357d005b3c0c9d3da0d9e739b4bdde3",
       "path": "pstack/skills/blast-radius",
       "notes": "Removes pstack sibling and multi-model requirements while preserving evidence-based impact analysis and executable proof of the central safety invariant.",
       "license": {
@@ -26,7 +26,7 @@
     "code-review": {
       "mode": "adapted",
       "repository": "https://github.com/cursor/plugins",
-      "revision": "7314f723a487ec406b6369fe5865ba034cfed166",
+      "revision": "5866df557357d005b3c0c9d3da0d9e739b4bdde3",
       "path": "pstack/skills/interrogate",
       "notes": "Combines an existing Skillektion consumer's eight-category review-agent contract with pstack interrogate's independent reviewer panel, evidence rubric, lead judgment, and visible dismissal reasoning; removes Cursor and fixed-model configuration.",
       "license": {
@@ -86,7 +86,7 @@
     "engineering-principles": {
       "mode": "adapted",
       "repository": "https://github.com/cursor/plugins",
-      "revision": "df581122cde17e6e27686b5a448bde23e4ad4318",
+      "revision": "5866df557357d005b3c0c9d3da0d9e739b4bdde3",
       "path": "pstack/skills/poteto-mode",
       "notes": "Consolidates selected pstack principle-* leaves into a portable conditional router; scopes measurement validation to performance testing already in scope, adapts behavior testing without assertion blacklists, excludes Cursor mode mechanics and redundant or conflicting principles, and leaves attack-the-premise unselected for this update.",
       "license": {
@@ -152,7 +152,7 @@
     "how": {
       "mode": "adapted",
       "repository": "https://github.com/cursor/plugins",
-      "revision": "7314f723a487ec406b6369fe5865ba034cfed166",
+      "revision": "5866df557357d005b3c0c9d3da0d9e739b4bdde3",
       "path": "pstack/skills/how",
       "notes": "Removes fixed models and Cursor task configuration; retains scoped code exploration, optional parallel slices, architectural explanation, and explain-before-critique ordering.",
       "license": {
@@ -280,7 +280,7 @@
     "skill-miner": {
       "mode": "adapted",
       "repository": "https://github.com/cursor/plugins",
-      "revision": "7314f723a487ec406b6369fe5865ba034cfed166",
+      "revision": "5866df557357d005b3c0c9d3da0d9e739b4bdde3",
       "path": "pstack/skills/automate-me",
       "notes": "Replaces Cursor transcript paths, tools, mode-skill conventions, implicit invocation, and automatic publication with supported exports, explicit session selection, privacy gates, a confirmation interview, and reviewable focused artifacts.",
       "license": {
@@ -291,7 +291,7 @@
     "technical-writing": {
       "mode": "adapted",
       "repository": "https://github.com/cursor/plugins",
-      "revision": "df581122cde17e6e27686b5a448bde23e4ad4318",
+      "revision": "5866df557357d005b3c0c9d3da0d9e739b4bdde3",
       "path": "pstack/skills/technical-writing",
       "notes": "Retains the writing layers and review checklist, adds concise PR briefings with necessary evidence inline, and removes date-bound claims, mandatory sibling invocation, repository-specific indentation policy, and manual-only invocation.",
       "license": {
@@ -363,7 +363,7 @@
     "why": {
       "mode": "adapted",
       "repository": "https://github.com/cursor/plugins",
-      "revision": "df581122cde17e6e27686b5a448bde23e4ad4318",
+      "revision": "5866df557357d005b3c0c9d3da0d9e739b4bdde3",
       "path": "pstack/skills/why",
       "notes": "Removes fixed models, Cursor task modes, and mandatory seven-MCP coverage; retains evidence and uncertainty safeguards and explicitly tests the user's suggested rationale as a hypothesis rather than confirming it.",
       "license": {
