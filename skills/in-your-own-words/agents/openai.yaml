@@ -1,0 +1,5 @@
+interface:
+  display_name: "In Your Own Words"
+  short_description: "Restate goals before starting work"
+policy:
+  allow_implicit_invocation: false

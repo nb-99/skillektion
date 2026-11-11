@@ -170,6 +170,17 @@
         "path": "LICENSE"
       }
     },
+    "in-your-own-words": {
+      "mode": "adapted",
+      "repository": "https://github.com/cursor/plugins",
+      "revision": "5866df557357d005b3c0c9d3da0d9e739b4bdde3",
+      "path": "pstack/skills/in-your-own-words",
+      "notes": "Keeps the single restatement instruction and adds the hand-off rule: return the restatement alone, do not start the work, and surface a contradiction instead of restating past it.",
+      "license": {
+        "spdx": "MIT",
+        "path": "pstack/LICENSE"
+      }
+    },
     "jira-workflow": {
       "mode": "owned"
     },
@@ -253,6 +264,17 @@
       "license": {
         "spdx": "MIT",
         "path": "LICENSE"
+      }
+    },
+    "sharpen": {
+      "mode": "adapted",
+      "repository": "https://github.com/cursor/plugins",
+      "revision": "5866df557357d005b3c0c9d3da0d9e739b4bdde3",
+      "path": "pstack/skills/sharpen",
+      "notes": "Keeps the four professional-depth questions and the rewrite rule verbatim; the source contains no Cursor-specific content.",
+      "license": {
+        "spdx": "MIT",
+        "path": "pstack/LICENSE"
       }
     },
     "skill-miner": {
