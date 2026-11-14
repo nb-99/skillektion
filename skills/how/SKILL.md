@@ -35,7 +35,7 @@ Synthesize the evidence into only the sections the question needs:
 
 Cite specific files and symbols. Use a diagram only when it reduces explanation
 cost. Mark inferred behavior and evidence gaps. For architectural problems or
-improvements, use the `code-review` or `codebase-design` skills instead; this
-skill explains, it does not judge.
+improvements, use the `architecture-critique` skill; `codebase-design` supplies
+the shared design vocabulary. This skill explains, it does not judge.
 
 The task is complete when the requested flow can be traced without hand-waving.

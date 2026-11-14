@@ -37,7 +37,9 @@ Use every relevant lens:
 - performance;
 - documentation.
 
-Skip an irrelevant lens only with a short reason. For substantial changes,
+Skip an irrelevant lens only with a short reason. Architecture-quality
+judgments about the whole subsystem, beyond what the diff shows, belong to the
+`architecture-critique` skill. For substantial changes,
 dispatch one independent reviewer per relevant category in parallel when the
 client supports it. Otherwise perform separate sequential passes with fresh
 attention. Give each reviewer the same scope, intent, diff, repository rules,

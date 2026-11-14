@@ -9,5 +9,5 @@ with capability-based read-only exploration. It retains scoped exploration and
 architectural synthesis, and keeps upstream's manual-only invocation policy.
 At revision `5866df5` upstream removed the critique mode, its critic prompt,
 and its critique rubric; this revision follows that removal and routes
-architectural critique to the `code-review` and `codebase-design` skills.
+architectural critique to this catalog's `architecture-critique` skill.
 Licensed under the MIT terms in `LICENSE.upstream`.
