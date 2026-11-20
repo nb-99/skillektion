@@ -1,6 +1,6 @@
 ---
 name: confluence-workflow
-description: Fetch and search Telekom Confluence wiki pages. Use whenever a wiki.telekom.de link or pageId appears, or when asked to look up, read, or search Confluence/wiki content. Covers fetching by pageId, search-then-fetch, and the confirm-before-write rule.
+description: Fetch and search Telekom Confluence wiki pages. Use whenever a wiki.telekom.de link or pageId appears, or when asked to look up, read, or search Confluence/wiki content. Covers fetching by pageId and search-then-fetch.
 ---
 
 # Confluence workflow
@@ -21,13 +21,3 @@ or any request to read/search the wiki.
 
 Don't rely on the search snippet alone — fetch the full page before reasoning
 about its content.
-
-## Writing / mutating
-
-- An explicit user request that names the Confluence target and a bounded write
-  action authorizes that action.
-- Otherwise, present the exact change and ask for confirmation before writing.
-- Always confirm immediately before destructive, irreversible,
-  privilege-changing, or materially broader work, including deletion, moving
-  page trees, access changes, and bulk edits.
-- Recheck the space, page id, and mutation before applying it.

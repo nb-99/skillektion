@@ -11,7 +11,7 @@ repair, and consensus-as-proof, and keeps the panel structure instead of the
 upstream rewrite that routes reviewers through the pstack arena skill. At
 revision `5866df5` it adopts upstream's run-proven finding standard — a finding
 survives only when a rerun proves it, and reviewers report the exact command
-and output — plus the intent restatement, wired to this catalog's
-`in-your-own-words` skill. It intentionally occupies the portable
+and output — plus the intent restatement from upstream's
+`in-your-own-words` skill, inlined. It intentionally occupies the portable
 `code-review` name instead of mirroring Matt Pocock's different two-axis review
 workflow. Licensed under the MIT terms in `LICENSE.upstream`.

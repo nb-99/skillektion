@@ -20,9 +20,10 @@ staged changes, or explicit files. Read the diff, commits, repository
 instructions, relevant surrounding code, and the originating specification or
 issue when available.
 
-State the intended outcome by restating it in your own words — use the
-`in-your-own-words` skill when available. Derive the intent from the request,
-diff, commits, and linked context. Ask only when none of them establishes it.
+Restate the intended outcome in your own words: the user's goal and the
+problem the change solves. Derive the intent from the request, diff, commits,
+and linked context. When that evidence contradicts the request, show the
+conflict. Ask only when none of them establishes the intent.
 
 ## 2. Select Review Lenses
 
@@ -39,7 +40,7 @@ Use every relevant lens:
 
 Skip an irrelevant lens only with a short reason. Architecture-quality
 judgments about the whole subsystem, beyond what the diff shows, belong to the
-`architecture-critique` skill. For substantial changes,
+`architecture-review` skill. For substantial changes,
 dispatch one independent reviewer per relevant category in parallel when the
 client supports it. Otherwise perform separate sequential passes with fresh
 attention. Give each reviewer the same scope, intent, diff, repository rules,

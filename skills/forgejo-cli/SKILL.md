@@ -20,20 +20,6 @@ before running anything beyond a simple view:
 - Every `fj` command family with verified flags: [references/fj.md](references/fj.md)
 - Every `fgj` command, JSON shapes, and version notes: [references/fgj.md](references/fgj.md)
 
-## Authorization
-
-Read freely. An explicit user request that names the Forgejo target and a
-bounded write action authorizes that action. Otherwise, show the exact mutation
-and ask for confirmation before running it.
-
-Always confirm immediately before destructive, irreversible,
-privilege-changing, or materially broader work. This includes merging or
-closing pull requests, deleting content or tags, publishing or deleting
-releases, cancelling runs, renaming repositories, enabling or disabling
-workflows, registering or deleting runners, changing repository access,
-settings, variables, or secrets, rewriting history, and any action whose
-effects exceed the request.
-
 ## How Forgejo does things
 
 Forgejo-specific facts that change how you work:
@@ -90,28 +76,18 @@ before relying on a flag; the references mark version requirements.
 
 ## Workflow advice
 
-- Run independent reads in parallel. When the harness supports background
-  commands with completion notifications, run `status --wait` in the
-  background and await completion without polling.
+- Run `status --wait` in the background when the harness supports completion
+  notifications, instead of polling.
 - Distinguish pending policy gates from CI failures and merge conflicts. A
   pending policy gate does not by itself indicate broken CI.
 - Search existing issues before creating one. Create issues with an absolute
   body-file path, then read the created issue back once.
-- Merge a PR only after required checks pass, mergeability is confirmed, and
-  the user confirmed the merge immediately before. Use the rebase or squash
-  form only if the project expects it.
+- Merge a PR only after required checks pass and mergeability is confirmed.
+  Use the rebase or squash form only if the project expects it.
 - Filter JSON in the initial command with `jq` rather than dumping full run or
   issue history. Verify the JSON shape of your installed version before
   selecting fields.
-- Treat API mutations like dedicated commands: same authorization rules.
-
-## Targeting and safety
-
+- `fgj api` mutations carry the same risk as the dedicated commands they
+  replace.
 - Prefer explicit targeting (`-r`, `-R`, `-H`, `--hostname`) when multiple
   remotes or repositories are in play.
-- Use read-only commands such as search, view, status, list, and contents
-  before mutating commands.
-- Recheck the repository, branch, issue/PR number, run ID, job ID, tag, or
-  release name before remote changes.
-- Never expose credentials, private keys, Actions secret values, or runner
-  credentials in arguments, output, files, or chat.

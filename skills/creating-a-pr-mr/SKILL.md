@@ -5,7 +5,7 @@ description: Create a pull request or merge request. Use when asked to open a PR
 
 # Create a PR or MR
 
-Use the host-specific `gh-cli`, `glab-cli`, or `forgejo-cli` skill for repository operations and creation commands. Follow its authorization rules and the `git-working-agreement` skill for Git changes. This skill owns the content and reviewability checks, not the host commands.
+Use `gh` for GitHub, or the `glab-cli` or `forgejo-cli` skill for GitLab or Forgejo, to run host commands. Follow the `git-working-agreement` skill for Git changes. This skill owns the content and reviewability checks, not the host commands.
 
 1. Identify the repository, target branch, and proposed head branch. Before creating anything, inspect the worktree status, commits and diff from the target branch, and any existing PR/MR for the same head and target. Confirm the target branch if it cannot be inferred reliably. Account for uncommitted work: it will not appear in the PR/MR.
 2. Assess the commit history shown to reviewers. Check for unrelated commits, accidental merge commits, fixup/squash commits, duplicate or misleading messages, and changes already present on the target branch. Several focused commits are fine. Report whether the history is clean, with specific reasons if it is not. If cleanup would rewrite published history or require a force-push, explain the issue and ask before doing so; do not block creation solely because history is imperfect unless the user wants to fix it first.

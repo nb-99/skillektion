@@ -7,8 +7,7 @@ disable-model-invocation: true
 # Why
 
 Investigate intent as a historical question. Code proves mechanics, not motive.
-The companion `how` skill answers what the code does and how it works; `why`
-answers what forces led to its shape.
+This skill answers what forces led to the code's shape, not what the code does.
 
 ## Evidence Rules
 

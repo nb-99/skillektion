@@ -1,17 +1,14 @@
 ---
 name: engineering-principles
-description: Apply conditional engineering principles to code changes, test writing or review, performance testing already in scope, and substantial design, migration, operations, concurrency, or maintenance decisions.
+description: Use whenever writing, changing, refactoring, or reviewing code, tests, scripts, or build configuration, before the first edit. Conditional engineering principles for boundaries, idempotency, concurrency, migrations, debugging repeated failures, testing, measurement, and verification.
 ---
 
 # Engineering Principles
 
-This is a conditional index, not a checklist to force onto every change. Select
-only principles whose trigger matches the current decision. State the principle
-only when it materially changes the work.
-
-Read [always-on.md](references/always-on.md) to select the concise rules relevant
-to a code modification. The sections below provide their decision triggers and
-additional context.
+This is a conditional index, not a checklist to force onto every change. At
+the start of the work, select only principles whose trigger matches the
+current task, and apply them throughout. State a principle only when it
+materially changes the work.
 
 ## Principles
 

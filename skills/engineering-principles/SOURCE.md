@@ -16,8 +16,9 @@ outcome-execution, laziness, experience-first, design-space, and
 never-block-on-the-human leaves because dedicated skills or host policy cover
 them or conflict with safe clarification rules. `sources.json` records the
 index path; the adapted text also derives from the sibling `principle-*` paths.
-The reusable `references/always-on.md` projection keeps the concise rule set in
-one source for clients that support global instructions.
+The skill is self-contained and triggered by code work. An earlier
+`references/always-on.md` projection, appended to global instructions, was
+removed so the rules load only when code is in scope.
 
 This revision incorporates `principle-explain-the-number` only for performance
 tests and benchmarks already in scope. It validates measurements without
@@ -26,9 +27,9 @@ performance effects, and removes the upstream benchmark-checklist dependency.
 
 At revision `5866df5` upstream sharpened `principle-attack-the-premise` to
 "write the premise down and test it directly before another fix that assumes
-it"; this revision adds that principle to the index and the always-on
-projection. The rest of the upstream pass renames leaf-skill references and
-tightens prose in files this adaptation does not carry.
+it"; this revision adds that principle to the index. The rest of the upstream
+pass renames leaf-skill references and tightens prose in files this adaptation
+does not carry.
 Upstream's eval-result scope, mandatory per-number limiter, and skip checklist
 are intentionally omitted. Bottleneck evidence is required when making a
 bottleneck claim, not for every measured number. It adapts
@@ -37,8 +38,6 @@ observable behavior or explicit contracts, without upstream's assertion
 blacklist, inaccurate `undefined` test, or blanket deletion rule. Legitimate
 negative, property-based, compile-time, contract, reviewed snapshot, and
 characterization tests remain valid, as do call counts that encode a contract.
-The `principle-attack-the-premise` addition was not selected for this update.
-Existing focused
-verification and safe clarification rules remain unchanged.
+Existing focused verification and safe clarification rules remain unchanged.
 
 Licensed under the MIT terms in `LICENSE.upstream`.

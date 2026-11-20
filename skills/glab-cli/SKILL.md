@@ -1,22 +1,12 @@
 ---
 name: glab-cli
-description: Operate on GitLab from the terminal with the glab CLI. Use for GitLab issues, merge requests, pipelines/CI, and releases. Mirrors the gh-cli workflow for GitLab-hosted repositories.
+description: Operate on GitLab from the terminal with the glab CLI. Use for GitLab issues, merge requests, pipelines/CI, and releases.
 ---
 
 # GitLab via the `glab` CLI
 
 Use the `glab` CLI for all GitLab operations (`glab api` covers anything without
 a dedicated subcommand). Prerequisite: `glab auth status` must be authenticated.
-
-Read freely. An explicit user request that names the GitLab target and a bounded
-write action authorizes that action. Otherwise, show the exact mutation and ask
-for confirmation before running it.
-
-Always confirm immediately before destructive, irreversible,
-privilege-changing, or materially broader work. This includes merges, closing
-or deleting content, publishing or deleting releases, changing access or
-secrets, and any action whose effects exceed the request. Recheck the project
-and object identifier before every mutation.
 
 ## Repos & info
 
@@ -67,4 +57,3 @@ glab release create TAG --notes N   # HIGH-RISK: confirm
 
 - `-R GROUP/PROJECT` (or `--repo`) targets a project from anywhere.
 - `glab api --paginate <endpoint>` for raw REST access and pagination.
-- When linking work, reference the issue in commit footers (`Refs: #123`).

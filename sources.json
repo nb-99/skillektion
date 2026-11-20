@@ -1,12 +1,12 @@
 {
   "version": 1,
   "skills": {
-    "architecture-critique": {
+    "architecture-review": {
       "mode": "adapted",
       "repository": "https://github.com/cursor/plugins",
       "revision": "5866df557357d005b3c0c9d3da0d9e739b4bdde3",
       "path": "pstack/skills/how",
-      "notes": "Carries the critique capability upstream removed from pstack/skills/how at 5866df5; the text derives from the critique prompt and rubric present through 7314f72. Keeps all six rubric lenses and the three severity tiers, shares the lead-verdict vocabulary with code-review, and removes the per-model critic roster and Cursor task configuration.",
+      "notes": "Merges the critique capability upstream removed from pstack/skills/how at 5866df5 (critique prompt and rubric present through 7314f72) with the change-history scoping and module-depth lens of Matt Pocock's improve-codebase-architecture; keeps the evidence rule, severity tiers, and lead verdict shared with code-review, inlines the explain step, and drops the HTML report, grilling follow-up, per-model critic roster, and Cursor task configuration.",
       "license": {
         "spdx": "MIT",
         "path": "pstack/LICENSE"
@@ -18,17 +18,6 @@
       "revision": "5866df557357d005b3c0c9d3da0d9e739b4bdde3",
       "path": "pstack/skills/blast-radius",
       "notes": "Removes pstack sibling and multi-model requirements while preserving evidence-based impact analysis and executable proof of the central safety invariant.",
-      "license": {
-        "spdx": "MIT",
-        "path": "pstack/LICENSE"
-      }
-    },
-    "bro": {
-      "mode": "adapted",
-      "repository": "https://github.com/cursor/plugins",
-      "revision": "7314f723a487ec406b6369fe5865ba034cfed166",
-      "path": "pstack/skills/bro",
-      "notes": "Retains the plain-language restatement command and adds preservation rules so simplification does not lose facts, caveats, decisions, or next steps.",
       "license": {
         "spdx": "MIT",
         "path": "pstack/LICENSE"
@@ -61,16 +50,6 @@
     "creating-a-pr-mr": {
       "mode": "owned"
     },
-    "defuddle": {
-      "mode": "mirror",
-      "repository": "https://github.com/kepano/obsidian-skills",
-      "revision": "398127736bd4ba42d767b1419fee1a927508370b",
-      "path": "plugins/obsidian/skills/defuddle",
-      "license": {
-        "spdx": "MIT",
-        "path": "plugins/obsidian/LICENSE"
-      }
-    },
     "diagram-design": {
       "mode": "mirror",
       "repository": "https://github.com/cathrynlavery/diagram-design",
@@ -99,7 +78,7 @@
       "repository": "https://github.com/cursor/plugins",
       "revision": "5866df557357d005b3c0c9d3da0d9e739b4bdde3",
       "path": "pstack/skills/poteto-mode",
-      "notes": "Consolidates selected pstack principle-* leaves into a portable conditional router; scopes measurement validation to performance testing already in scope, adapts behavior testing without assertion blacklists, excludes Cursor mode mechanics and redundant or conflicting principles, and leaves attack-the-premise unselected for this update.",
+      "notes": "Consolidates selected pstack principle-* leaves into one self-contained conditional skill triggered by code work; scopes measurement validation to performance testing already in scope, adapts behavior testing without assertion blacklists, and excludes Cursor mode mechanics and redundant or conflicting principles.",
       "license": {
         "spdx": "MIT",
         "path": "pstack/LICENSE"
@@ -118,9 +97,6 @@
         "path": "skills/frontend-design/LICENSE.txt"
       }
     },
-    "gh-cli": {
-      "mode": "owned"
-    },
     "git-conventional-commits": {
       "mode": "owned"
     },
@@ -130,26 +106,6 @@
     "glab-cli": {
       "mode": "owned"
     },
-    "grill-me": {
-      "mode": "mirror",
-      "repository": "https://github.com/mattpocock/skills",
-      "revision": "6654f6b60cd9d5be8b54c6fafe44346dabeb3b76",
-      "path": "skills/productivity/grill-me",
-      "license": {
-        "spdx": "MIT",
-        "path": "LICENSE"
-      }
-    },
-    "grill-with-docs": {
-      "mode": "mirror",
-      "repository": "https://github.com/mattpocock/skills",
-      "revision": "6654f6b60cd9d5be8b54c6fafe44346dabeb3b76",
-      "path": "skills/engineering/grill-with-docs",
-      "license": {
-        "spdx": "MIT",
-        "path": "LICENSE"
-      }
-    },
     "grilling": {
       "mode": "mirror",
       "repository": "https://github.com/mattpocock/skills",
@@ -158,38 +114,6 @@
       "license": {
         "spdx": "MIT",
         "path": "LICENSE"
-      }
-    },
-    "how": {
-      "mode": "adapted",
-      "repository": "https://github.com/cursor/plugins",
-      "revision": "5866df557357d005b3c0c9d3da0d9e739b4bdde3",
-      "path": "pstack/skills/how",
-      "notes": "Removes fixed models and Cursor task configuration; retains scoped code exploration, optional parallel slices, architectural explanation, and explain-before-critique ordering.",
-      "license": {
-        "spdx": "MIT",
-        "path": "pstack/LICENSE"
-      }
-    },
-    "improve-codebase-architecture": {
-      "mode": "mirror",
-      "repository": "https://github.com/mattpocock/skills",
-      "revision": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
-      "path": "skills/engineering/improve-codebase-architecture",
-      "license": {
-        "spdx": "MIT",
-        "path": "LICENSE"
-      }
-    },
-    "in-your-own-words": {
-      "mode": "adapted",
-      "repository": "https://github.com/cursor/plugins",
-      "revision": "5866df557357d005b3c0c9d3da0d9e739b4bdde3",
-      "path": "pstack/skills/in-your-own-words",
-      "notes": "Keeps the single restatement instruction and adds the hand-off rule: return the restatement alone, do not start the work, and surface a contradiction instead of restating past it.",
-      "license": {
-        "spdx": "MIT",
-        "path": "pstack/LICENSE"
       }
     },
     "jira-workflow": {
@@ -204,9 +128,6 @@
         "spdx": "MIT",
         "path": "plugins/obsidian/LICENSE"
       }
-    },
-    "k8s-ops": {
-      "mode": "owned"
     },
     "obsidian-bases": {
       "mode": "mirror",
@@ -257,26 +178,6 @@
         "path": "LICENSE"
       }
     },
-    "research": {
-      "mode": "mirror",
-      "repository": "https://github.com/mattpocock/skills",
-      "revision": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
-      "path": "skills/engineering/research",
-      "license": {
-        "spdx": "MIT",
-        "path": "LICENSE"
-      }
-    },
-    "setup-matt-pocock-skills": {
-      "mode": "mirror",
-      "repository": "https://github.com/mattpocock/skills",
-      "revision": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
-      "path": "skills/engineering/setup-matt-pocock-skills",
-      "license": {
-        "spdx": "MIT",
-        "path": "LICENSE"
-      }
-    },
     "sharpen": {
       "mode": "adapted",
       "repository": "https://github.com/cursor/plugins",
@@ -308,17 +209,6 @@
       "license": {
         "spdx": "MIT",
         "path": "pstack/LICENSE"
-      }
-    },
-    "theme-factory": {
-      "mode": "adapted",
-      "repository": "https://github.com/anthropics/skills",
-      "revision": "41bbe19d1a1a7eaab5e7bb9050a417e5c6cffc8f",
-      "path": "skills/theme-factory",
-      "notes": "Makes the showcase step environment-agnostic so agents that cannot display PDF files summarize the theme definitions instead, fixes typos in the description and intro, and adds manual-only invocation metadata. Theme definitions and the showcase PDF are unchanged.",
-      "license": {
-        "spdx": "Apache-2.0",
-        "path": "skills/theme-factory/LICENSE.txt"
       }
     },
     "to-spec": {
@@ -359,16 +249,6 @@
       "license": {
         "spdx": "MIT",
         "path": "pstack/LICENSE"
-      }
-    },
-    "wayfinder": {
-      "mode": "mirror",
-      "repository": "https://github.com/mattpocock/skills",
-      "revision": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
-      "path": "skills/engineering/wayfinder",
-      "license": {
-        "spdx": "MIT",
-        "path": "LICENSE"
       }
     },
     "why": {

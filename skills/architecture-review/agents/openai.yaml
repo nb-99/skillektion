@@ -1,0 +1,3 @@
+interface:
+  display_name: "Architecture Review"
+  short_description: "Find structural problems worth fixing in a codebase"

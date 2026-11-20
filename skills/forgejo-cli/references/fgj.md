@@ -102,8 +102,8 @@ authenticated user. `issue edit --body ""` clears the body.
 
 ## Labels and milestones
 
-Deletions prompt for confirmation; `--yes` skips it and needs prior
-confirmation under the authorization rules.
+Deletions prompt for confirmation; use `--yes` only after the user confirmed
+the deletion.
 
 ```sh
 fgj label list -R HOST/OWNER/REPO --json
@@ -225,4 +225,4 @@ fgj api --paginate --slurp repos/OWNER/REPO/commits | jq 'add | length'
 fgj api -X PATCH repos/OWNER/REPO/issues/N -F state=closed
 ```
 
-API mutations follow the same authorization rules as dedicated commands.
+API mutations carry the same risk as the dedicated commands they replace.

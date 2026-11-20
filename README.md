@@ -8,7 +8,7 @@ exact files users install.
 Install one skill with GitHub CLI 2.91 or newer:
 
 ```sh
-gh skill install nb-99/skillektion gh-cli --scope user --agent opencode
+gh skill install nb-99/skillektion grilling --scope user --agent opencode
 ```
 
 Install the entire collection:

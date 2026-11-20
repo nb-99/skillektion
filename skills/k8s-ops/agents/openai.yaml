@@ -1,3 +1,0 @@
-interface:
-  display_name: "Kubernetes Operations"
-  short_description: "Inspect and operate Kubernetes safely"
