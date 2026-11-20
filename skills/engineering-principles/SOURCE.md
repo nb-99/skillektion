@@ -11,14 +11,21 @@ leaves; users also invoke principle names to steer a workflow. This
 adaptation consolidates selected portable rules into one conditional index and
 keeps it available for automatic selection while omitting Cursor mode
 mechanics. It excludes the upstream root-cause, type-system,
-domain-modeling, context-window, subtraction, foundational-thinking,
-outcome-execution, laziness, experience-first, design-space, and
-never-block-on-the-human leaves because dedicated skills or host policy cover
-them or conflict with safe clarification rules. `sources.json` records the
+domain-modeling, context-window, foundational-thinking, outcome-execution,
+experience-first, design-space, and never-block-on-the-human leaves because
+dedicated skills or host policy cover them or conflict with safe clarification
+rules. `sources.json` records the
 index path; the adapted text also derives from the sibling `principle-*` paths.
 The skill is self-contained and triggered by code work. An earlier
 `references/always-on.md` projection, appended to global instructions, was
 removed so the rules load only when code is in scope.
+
+Keep It Minimal merges `principle-subtract-before-you-add` and
+`principle-laziness-protocol`. Both were excluded while a host-wide simplicity
+rule covered them; that rule was removed, so the principle now lives here and
+applies to every change. It adds guidance on dependencies and optimization, and
+omits upstream's prompt-simplification and reference-stub items, which belong
+to agent-document writing rather than code.
 
 This revision incorporates `principle-explain-the-number` only for performance
 tests and benchmarks already in scope. It validates measurements without

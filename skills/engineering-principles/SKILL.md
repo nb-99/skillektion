@@ -1,16 +1,29 @@
 ---
 name: engineering-principles
-description: Use whenever writing, changing, refactoring, or reviewing code, tests, scripts, or build configuration, before the first edit. Conditional engineering principles for boundaries, idempotency, concurrency, migrations, debugging repeated failures, testing, measurement, and verification.
+description: Use whenever writing, changing, refactoring, or reviewing code, tests, scripts, or build configuration, before the first edit. Conditional engineering principles for minimal changes, boundaries, idempotency, concurrency, migrations, debugging repeated failures, testing, measurement, and verification.
 ---
 
 # Engineering Principles
 
 This is a conditional index, not a checklist to force onto every change. At
 the start of the work, select only principles whose trigger matches the
-current task, and apply them throughout. State a principle only when it
-materially changes the work.
+current task, and apply them throughout. Keep It Minimal applies to every
+change. State a principle only when it materially changes the work.
 
 ## Principles
+
+### Keep It Minimal
+
+Use for every change.
+
+- Make the smallest change that solves the stated problem. Leave unrelated
+  code alone, and mention other fixes separately.
+- Build for observed use. Add options, layers, guards, or validators only when
+  the requirement asks for them.
+- Remove dead code and redundant paths before adding new ones.
+- Add a dependency only when it removes more complexity than it brings.
+- Optimize only when a measurement shows the need.
+- Keep each decision in one place.
 
 ### Minimize Reader Load
 
