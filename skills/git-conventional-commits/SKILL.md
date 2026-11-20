@@ -54,8 +54,7 @@ first.**
   the subject: `Refs: PROJ-1234` (Jira) or `Refs: #123` (GitHub/GitLab).
 - Use `Closes #123` / `Fixes #123` only when the commit actually resolves it and
   the platform supports auto-close.
-- For Jira tickets, follow the `jira-workflow` skill (e.g. ids like `PROJ-1234`);
-  put the id in the footer, don't transition the ticket as a side effect.
+- Do not transition a Jira ticket as a side effect of committing.
 
 ## Workflow
 

@@ -44,9 +44,6 @@
         "path": "LICENSE"
       }
     },
-    "confluence-workflow": {
-      "mode": "owned"
-    },
     "creating-a-pr-mr": {
       "mode": "owned"
     },
@@ -115,9 +112,6 @@
         "spdx": "MIT",
         "path": "LICENSE"
       }
-    },
-    "jira-workflow": {
-      "mode": "owned"
     },
     "json-canvas": {
       "mode": "mirror",
@@ -209,36 +203,6 @@
       "license": {
         "spdx": "MIT",
         "path": "pstack/LICENSE"
-      }
-    },
-    "to-spec": {
-      "mode": "mirror",
-      "repository": "https://github.com/mattpocock/skills",
-      "revision": "6654f6b60cd9d5be8b54c6fafe44346dabeb3b76",
-      "path": "skills/engineering/to-spec",
-      "license": {
-        "spdx": "MIT",
-        "path": "LICENSE"
-      }
-    },
-    "to-tickets": {
-      "mode": "mirror",
-      "repository": "https://github.com/mattpocock/skills",
-      "revision": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
-      "path": "skills/engineering/to-tickets",
-      "license": {
-        "spdx": "MIT",
-        "path": "LICENSE"
-      }
-    },
-    "triage": {
-      "mode": "mirror",
-      "repository": "https://github.com/mattpocock/skills",
-      "revision": "7a030a8b0dcaa601bb0dda9aaf174affb3d61145",
-      "path": "skills/engineering/triage",
-      "license": {
-        "spdx": "MIT",
-        "path": "LICENSE"
       }
     },
     "unslop": {
