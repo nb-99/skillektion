@@ -14,5 +14,8 @@ small tables, and avoiding a rigid one-minute reading limit. The local review
 checklist remains intact with a pull-request-specific completion check. At
 revision `5866df5` upstream's edits were a prose-tightening pass over rules
 this adaptation already condenses; this version deliberately keeps the exact
-symbol requirement that upstream dropped. Licensed under the MIT terms in
-`LICENSE.upstream`.
+symbol requirement that upstream dropped. The sentence-load and ambiguity rules
+and their review questions are removed because the consumer's always-on
+writing rules and `unslop` cover them; this skill keeps document modes,
+organization, pull-request briefings, and the remaining review checks.
+Licensed under the MIT terms in `LICENSE.upstream`.

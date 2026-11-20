@@ -199,7 +199,7 @@
       "repository": "https://github.com/cursor/plugins",
       "revision": "5866df557357d005b3c0c9d3da0d9e739b4bdde3",
       "path": "pstack/skills/technical-writing",
-      "notes": "Retains the writing layers and review checklist, adds concise PR briefings with necessary evidence inline, and removes date-bound claims, mandatory sibling invocation, repository-specific indentation policy, and manual-only invocation.",
+      "notes": "Keeps document modes, organization, and a reduced review checklist; adds concise PR briefings with necessary evidence inline; removes sentence-level rules covered by always-on writing rules and unslop, date-bound claims, mandatory sibling invocation, repository-specific indentation policy, and manual-only invocation.",
       "license": {
         "spdx": "MIT",
         "path": "pstack/LICENSE"
