@@ -44,6 +44,17 @@
         "path": "LICENSE"
       }
     },
+    "council": {
+      "mode": "adapted",
+      "repository": "https://github.com/t3dotgg/tstack",
+      "revision": "11e37a74d0a6868c121cd0910ab2b3bd9873b92a",
+      "path": "skills/council",
+      "notes": "Makes the skill manual-only and limited to change reviews and plan critique, replaces T3 Code delegate tools with runtime model resolution through the client's subagent tool, continues with at least two labs instead of requiring three, adds a member output contract and code-review's verification and verdict step inline, bounds the fix loop to three rounds with ordered stop rules, limits plans to one round, and drops non-blocking delegates.",
+      "license": {
+        "spdx": "MIT",
+        "path": "LICENSE"
+      }
+    },
     "creating-a-pr-mr": {
       "mode": "owned"
     },
