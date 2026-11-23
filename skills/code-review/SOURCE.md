@@ -14,4 +14,6 @@ survives only when a rerun proves it, and reviewers report the exact command
 and output — plus the intent restatement from upstream's
 `in-your-own-words` skill, inlined. It intentionally occupies the portable
 `code-review` name instead of mirroring Matt Pocock's different two-axis review
-workflow. Licensed under the MIT terms in `LICENSE.upstream`.
+workflow. Unlike upstream, it is model-invocable, so that other skills such as
+`council` and `drive-to-ready` can load it. Licensed under the MIT terms in
+`LICENSE.upstream`.

@@ -1,5 +1,3 @@
 interface:
   display_name: "Code Review"
   short_description: "Run independent reviews with lead judgment"
-policy:
-  allow_implicit_invocation: false

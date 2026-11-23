@@ -28,7 +28,7 @@
       "repository": "https://github.com/cursor/plugins",
       "revision": "5866df557357d005b3c0c9d3da0d9e739b4bdde3",
       "path": "pstack/skills/interrogate",
-      "notes": "Combines an existing Skillektion consumer's eight-category review-agent contract with pstack interrogate's independent reviewer panel, evidence rubric, lead judgment, and visible dismissal reasoning; removes Cursor and fixed-model configuration.",
+      "notes": "Combines an existing Skillektion consumer's eight-category review-agent contract with pstack interrogate's independent reviewer panel, evidence rubric, lead judgment, and visible dismissal reasoning; removes Cursor and fixed-model configuration; and is model-invocable so other skills can load it.",
       "license": {
         "spdx": "MIT",
         "path": "pstack/LICENSE"
@@ -49,7 +49,7 @@
       "repository": "https://github.com/t3dotgg/tstack",
       "revision": "11e37a74d0a6868c121cd0910ab2b3bd9873b92a",
       "path": "skills/council",
-      "notes": "Makes the skill manual-only and limited to change reviews and plan critique, replaces T3 Code delegate tools with runtime model resolution through the client's subagent tool, continues with at least two labs instead of requiring three, adds a member output contract and code-review's verification and verdict step inline, bounds the fix loop to three rounds with ordered stop rules, limits plans to one round, and drops non-blocking delegates.",
+      "notes": "Limits invocation to explicit council or multi-model review requests and to change reviews and plan critique, replaces T3 Code delegate tools with runtime model resolution through the client's subagent tool, continues with at least two labs instead of requiring three, loads code-review for the finding format, verification, and verdicts, bounds the fix loop to three rounds with ordered stop rules, limits plans to one round, and drops non-blocking delegates.",
       "license": {
         "spdx": "MIT",
         "path": "LICENSE"

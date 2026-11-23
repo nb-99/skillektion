@@ -11,21 +11,22 @@ against scope creep.
 
 It changes the following:
 
-- Makes the skill manual-only and limits it to change reviews and plan or
-  design critique; upstream triggers on the word "council" for any request.
+- Limits invocation to explicit requests for a council or a multi-model
+  review, made directly or through a skill the user invoked, and limits the
+  skill to change reviews and plan or design critique; upstream triggers on
+  the word "council" for any request.
 - Removes the T3 Code tools (`orchestrator_capabilities`, `delegate_task`) and
   resolves members from the client's model list, so the catalog names no fixed
   model identifiers.
-- States that invoking the skill authorizes setting a model per subagent call,
-  and stops on clients that cannot do that.
+- States that the user's explicit request authorizes setting a model per
+  subagent call, and stops on clients that cannot do that.
 - Continues with the remaining members while they cover at least two labs;
   upstream stops when it cannot reach three providers.
-- Adds a member output contract: severity tiers and finding fields for
-  changes, a recommendation and readiness score for plans, and a report with
-  an agreement map. Upstream asks for a score on code reviews only.
-- Replaces upstream's summary with a verification and verdict step adapted
-  from this catalog's `code-review` skill, inlined because that skill is
-  manual-only and cannot be loaded from here.
+- Loads this catalog's `code-review` skill for the review lenses, finding
+  format, run-proven standard, verification, and verdicts, and adds a
+  readiness score per member. Plans get a recommendation and readiness score.
+  Upstream asks for a score on code reviews only and has no verification
+  step.
 - Replaces "continue until all delegates are satisfied" with an ordered loop:
   stop when no verified finding needs action, after three rounds, or when the
   mean score stops rising. Plans and designs get one round.

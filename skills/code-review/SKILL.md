@@ -1,14 +1,13 @@
 ---
 name: code-review
-description: Review implemented changes for completeness, correctness, simplification, security, quality, tests, performance, and documentation. Use for branch, pull-request, staged, or worktree reviews after a fixed comparison point is known.
-disable-model-invocation: true
+description: Review a finished change with independent reviewers and verified findings. Use when asked to review a branch, pull or merge request, commit range, staged changes, or worktree.
 ---
 
 # Code Review
 
 Run independent adversarial reviews, then apply pragmatic lead judgment. Report
-findings before summary. Review only; do not change code unless the user asks in
-a separate step.
+findings before summary. Review only; the user or a calling skill decides which
+findings to fix.
 
 Read [rubric.md](references/rubric.md) before dispatching reviewers and
 [lead-judgment.md](references/lead-judgment.md) before synthesis.

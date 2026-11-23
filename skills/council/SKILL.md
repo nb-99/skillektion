@@ -1,7 +1,6 @@
 ---
 name: council
-description: Review a change or critique a plan with strong models from several labs, verify their findings, fix the accepted ones, and repeat the review.
-disable-model-invocation: true
+description: Review a change or critique a plan with strong models from several labs, verify their findings, fix the accepted ones, and repeat the review. Use only when the user explicitly asks for a council or a multi-model review, directly or in a request to a skill they invoked.
 ---
 
 # Council
@@ -13,6 +12,10 @@ output, decide what holds, and make the fixes.
 
 ## 1. Prepare
 
+- Load the `code-review` skill and read its rubric and lead-judgment
+  references. Council uses its review lenses, finding format, run-proven
+  standard, verification steps, and verdicts. Council's members and report
+  replace code-review's reviewer dispatch and output steps.
 - Address open pull-request comments, fix known issues, and run the relevant
   checks first, so members review the current state. Skip fixes to code the
   user plans to replace.
@@ -31,8 +34,8 @@ of it such as a Pro or Max edition, for example Claude Opus, GPT Sol, and
 Gemini. Resolve the exact model identifiers from the client's model list. Use
 high reasoning effort when the client lets you set it.
 
-Invoking this skill is the user's request to run these models, so set the
-model explicitly on every member's subagent call.
+The user's explicit request for a council is the request to run these models,
+so set the model explicitly on every member's subagent call.
 
 A member is missing when its model is unavailable or when it fails or times
 out during a round. Record every missing member and never substitute another
@@ -51,19 +54,9 @@ expects one lane or category, assign all of them. Give every member the same
 intent, subject, repository rules, and the checks already run, and tell it
 that no findings is a valid result.
 
-For a change, ask each member for a full review across completeness,
-correctness, design and simplification, security, tests, performance, and
-documentation. Each finding states:
-
-- severity: **high** for release-blocking or materially unsafe behavior,
-  **medium** for a reachable defect or significant missing requirement,
-  **low** for a bounded risk with concrete impact;
-- the `file:line` location and the reachable impact;
-- evidence, preferably the command or test that shows the failure, with its
-  output;
-- a minimal fix direction.
-
-Also ask for a score out of 10 for whether the change is ready to merge.
+For a change, give each member code-review's rubric, run-proven standard, and
+reviewer finding format, and ask for a full review across every lens. Also
+ask for a score out of 10 for whether the change is ready to merge.
 
 For a plan or design, ask each member for one recommendation, the main risks,
 the assumptions, the evidence that would change the answer, and a score out of
@@ -75,24 +68,13 @@ every member has returned.
 
 ## 4. Judge
 
-Filter member output; never concatenate it.
-
-1. Merge duplicate findings and record which members raised each one.
-2. Rerun each proving command, or the cheapest equivalent that does not mutate
-   the repository or external systems. Trace findings without a run through
-   actual callers, inputs, and boundaries before accepting them.
-3. Classify every finding:
-   - **Act on:** a concrete defect or a material missing requirement.
-   - **Consider:** a real concern whose priority or trade-off is uncertain.
-   - **Noted:** a valid low-priority observation or residual risk.
-   - **Dismissed:** incorrect, unreachable, missing repository context, or
-     preference only. Give the reason so the user can override it.
-4. Treat agreement between members as a signal for priority, never as proof.
-   Scrutinize a correctness or security finding even when one member alone
-   raises it.
+Filter member output; never concatenate it. For a change, apply code-review's
+verification steps and lead verdict to the member reports, treating each
+member as one independent pass.
 
 For a plan or design, compare the recommendations, and judge each risk and
-assumption against the codebase and constraints with the same four verdicts.
+assumption against the codebase and constraints with code-review's four
+verdicts.
 
 ## 5. Loop
 
@@ -112,15 +94,15 @@ For a change, after judging each round:
 
 ## Report
 
-1. Findings by verdict and severity, with location and evidence, then the
-   dismissed findings with reasons.
-2. An agreement map: which members raised each finding, and where they
-   disagreed.
-3. The fixes made in each round, marking any that no round reviewed.
-4. The score table, labeling members by model name. Write `no score` when a
+1. For a change, code-review's output, in its order, with members as the
+   independent passes of its agreement map. For a plan or design, the risks
+   and assumptions by verdict, with the dismissed ones and reasons, and which
+   members raised each one.
+2. The fixes made in each round, marking any that no round reviewed.
+3. The score table, labeling members by model name. Write `no score` when a
    member gave none, and `missing` for a member that failed or was
    unavailable.
-5. Follow-ups, open questions, and residual risk.
+4. Follow-ups, open questions, and residual risk.
 
 ```markdown
 ## Council review
