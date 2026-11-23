@@ -45,15 +45,20 @@ client supports it. Otherwise perform separate sequential passes with fresh
 attention. Give each reviewer the same scope, intent, diff, repository rules,
 and rubric.
 
-Reviewer prompts must state the objective, boundaries, edit prohibition,
-expected structured output, and validation allowed. Reviewers may inspect
-surrounding code and run checks that do not mutate the repository or external
-systems. Apply the run-proven standard: a finding survives only when a run
-backs it. Each reviewer proves findings with a failing test, a repro script,
-or command output that shows the wrong behavior, and reports the exact command
-and its output alongside the output the intent requires. Findings without a
-run — style, naming, structure, and risks that need a future change to matter —
-are reported only as lead-judgment observations, never as verified findings.
+Reviewer prompts must state the objective, boundaries, repository edit
+prohibition (no changes to tracked or untracked repository files; throwaway
+reproduction scripts in a temporary scratch directory such as `$TMPDIR/opencode/`
+are allowed and must be cleaned up), expected structured output, and validation
+allowed. Reviewers may inspect surrounding code, run read-only or check-only
+verification commands (including temporary tool environments such as
+`nix-shell -p`), and run local reproduction scripts in a temporary scratch
+directory that do not mutate the repository or external systems. Apply the
+run-proven standard: a finding survives only when a run backs it. Each reviewer
+proves findings with a failing test, a repro script, or command output that
+shows the wrong behavior, and reports the exact command and its output alongside
+the output the intent requires. Findings without a run — style, naming,
+structure, and risks that need a future change to matter — are reported only as
+lead-judgment observations, never as verified findings.
 No findings is a valid result. Reviewers must return findings with severity,
 location, reachable impact, evidence, the proving command and its output, and
 a minimal fix direction. Use **high** for release-blocking or materially

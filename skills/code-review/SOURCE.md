@@ -15,5 +15,8 @@ and output — plus the intent restatement from upstream's
 `in-your-own-words` skill, inlined. It intentionally occupies the portable
 `code-review` name instead of mirroring Matt Pocock's different two-axis review
 workflow. Unlike upstream, it is model-invocable, so that other skills such as
-`council` and `drive-to-ready` can load it. Licensed under the MIT terms in
+`council` and `drive-to-ready` can load it, and it scopes the reviewer edit
+prohibition to repository files while explicitly permitting throwaway
+reproduction scripts in a temporary scratch directory and temporary tool
+environments such as `nix-shell -p`. Licensed under the MIT terms in
 `LICENSE.upstream`.

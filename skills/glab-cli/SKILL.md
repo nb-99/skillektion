@@ -35,7 +35,7 @@ glab mr create --draft --source-branch BRANCH --title T                # WRITE: 
 glab mr update NUMBER --ready                                          # WRITE: draft -> ready
 glab mr update NUMBER --draft                                          # WRITE: ready -> draft
 glab mr approve NUMBER                                                 # WRITE
-glab mr merge NUMBER --squash                                          # HIGH-RISK: confirm
+glab mr merge NUMBER --squash                                          # HIGH-RISK: confirm unless requested
 ```
 
 ## Pipelines / CI
@@ -45,7 +45,7 @@ glab ci list
 glab ci view              # current branch's pipeline
 glab ci status
 glab ci trace JOB_ID      # stream a job's log
-glab ci retry JOB_ID      # HIGH-RISK: confirm
+glab ci retry JOB_ID      # HIGH-RISK: confirm unless requested
 ```
 
 ## Releases
@@ -53,7 +53,7 @@ glab ci retry JOB_ID      # HIGH-RISK: confirm
 ```sh
 glab release list
 glab release view TAG
-glab release create TAG --notes N   # HIGH-RISK: confirm
+glab release create TAG --notes N   # HIGH-RISK: confirm unless requested
 ```
 
 ## Tips
