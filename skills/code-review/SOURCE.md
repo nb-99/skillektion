@@ -18,5 +18,6 @@ workflow. Unlike upstream, it is model-invocable, so that other skills such as
 `council` and `drive-to-ready` can load it, and it scopes the reviewer edit
 prohibition to repository files while explicitly permitting throwaway
 reproduction scripts in a temporary scratch directory and temporary tool
-environments such as `nix-shell -p`. Licensed under the MIT terms in
-`LICENSE.upstream`.
+environments such as `nix-shell -p`. Reviewers remove their scratch directory
+before reporting and provide a self-contained command the lead can rerun in a
+fresh directory. Licensed under the MIT terms in `LICENSE.upstream`.

@@ -35,8 +35,10 @@ glab mr create --draft --source-branch BRANCH --title T                # WRITE: 
 glab mr update NUMBER --ready                                          # WRITE: draft -> ready
 glab mr update NUMBER --draft                                          # WRITE: ready -> draft
 glab mr approve NUMBER                                                 # WRITE
-glab mr merge NUMBER --squash                                          # HIGH-RISK: confirm unless requested
+glab mr merge NUMBER                                                   # HIGH-RISK: confirm unless requested
 ```
+
+Add `--squash` only when the user requests squashing or project policy requires it.
 
 ## Pipelines / CI
 

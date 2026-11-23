@@ -45,20 +45,20 @@ client supports it. Otherwise perform separate sequential passes with fresh
 attention. Give each reviewer the same scope, intent, diff, repository rules,
 and rubric.
 
-Reviewer prompts must state the objective, boundaries, repository edit
-prohibition (no changes to tracked or untracked repository files; throwaway
-reproduction scripts in a temporary scratch directory such as `$TMPDIR/opencode/`
-are allowed and must be cleaned up), expected structured output, and validation
-allowed. Reviewers may inspect surrounding code, run read-only or check-only
-verification commands (including temporary tool environments such as
-`nix-shell -p`), and run local reproduction scripts in a temporary scratch
-directory that do not mutate the repository or external systems. Apply the
-run-proven standard: a finding survives only when a run backs it. Each reviewer
-proves findings with a failing test, a repro script, or command output that
-shows the wrong behavior, and reports the exact command and its output alongside
-the output the intent requires. Findings without a run — style, naming,
-structure, and risks that need a future change to matter — are reported only as
-lead-judgment observations, never as verified findings.
+Reviewer prompts must state the objective, boundaries, allowed checks, and
+expected report. Keep tracked and untracked repository files unchanged. Reviewers
+may inspect code and run check-only commands, including in temporary tool
+environments such as `nix-shell -p`. For throwaway scripts and fixtures, create
+a private scratch directory (for example, under `$TMPDIR/opencode/`). Remove
+that directory before submitting the report. Checks must leave the repository
+and external systems unchanged.
+
+Apply the run-proven standard: a finding survives only when a run backs it.
+For each finding, report the exact, self-contained command you ran, its output,
+and the expected output. If the command needs scratch files, include the setup
+in the command so each run recreates its scripts and fixtures in a fresh
+directory. Report findings without a run (style, naming, structure, and risks
+that need a future change to matter) as lead-judgment observations.
 No findings is a valid result. Reviewers must return findings with severity,
 location, reachable impact, evidence, the proving command and its output, and
 a minimal fix direction. Use **high** for release-blocking or materially
@@ -72,10 +72,12 @@ After every reviewer returns:
 
 1. Merge duplicate findings and record which independent passes raised them.
 2. Rerun each finding's proving command, or the cheapest equivalent that does
-   not mutate the repository or external systems. Keep a finding only when the
-   output shows the failure and the failure breaks the stated intent; drop the
-   rest and record the count and reason per reviewer. Merge findings that
-   share a root cause.
+   not mutate the repository or external systems. For a scratch reproduction,
+   use your own fresh scratch directory and clean it up afterward. The reviewer
+   has removed theirs; a missing path from that run is not evidence for or
+   against the finding. Keep a finding only when the output shows a failure
+   that breaks the stated intent. Drop the rest and record the count and reason
+   per reviewer. Merge findings that share a root cause.
 3. For findings that cannot carry a run, trace high-impact correctness and
    security claims through actual callers, boundaries, and runtime paths
    before promoting them above observation status.
