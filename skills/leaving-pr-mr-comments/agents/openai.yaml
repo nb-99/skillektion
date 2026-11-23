@@ -1,0 +1,4 @@
+interface:
+  display_name: "Leaving PR/MR Comments"
+  short_description: "Format agent-authored PR and MR comments"
+  default_prompt: "Use $leaving-pr-mr-comments when posting this comment on my behalf."

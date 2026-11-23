@@ -134,6 +134,17 @@
         "path": "plugins/obsidian/LICENSE"
       }
     },
+    "leaving-pr-mr-comments": {
+      "mode": "adapted",
+      "repository": "https://github.com/t3dotgg/tstack",
+      "revision": "11e37a74d0a6868c121cd0910ab2b3bd9873b92a",
+      "path": "skills/leaving-pr-comments",
+      "notes": "Renames the skill, extends it from GitHub to GitLab and Forgejo, narrows the trigger to pull and merge request comments, and resolves threads only where the host allows it.",
+      "license": {
+        "spdx": "MIT",
+        "path": "LICENSE"
+      }
+    },
     "obsidian-bases": {
       "mode": "mirror",
       "repository": "https://github.com/kepano/obsidian-skills",
