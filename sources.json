@@ -81,6 +81,17 @@
         "path": "LICENSE"
       }
     },
+    "drive-to-ready": {
+      "mode": "adapted",
+      "repository": "https://github.com/t3dotgg/tstack",
+      "revision": "11e37a74d0a6868c121cd0910ab2b3bd9873b92a",
+      "path": "skills/full-stop",
+      "notes": "Inlines the full-send workflow, proof rules, merge gate, and question rules; renames the skill and makes it manual-only; narrows testing permission to the repository's own tests and commands; opens a draft and marks it ready at the gate, then watches again; requests Copilot review when no automatic review covers the draft; defines the readiness gate through the watcher verdict and requires requested changes to be fixed or answered; replaces sol-loop, file-pr, and babysit-pr with code-review or council, creating-a-pr-mr, and watch-pr-mr; supports GitLab and Forgejo; and drops T3 Code tools.",
+      "license": {
+        "spdx": "MIT",
+        "path": "LICENSE"
+      }
+    },
     "engineering-principles": {
       "mode": "adapted",
       "repository": "https://github.com/cursor/plugins",
