@@ -6,6 +6,11 @@ Use the repository's PR/MR template when one applies. Otherwise, choose headings
 
 What problem or request prompted the change? What observable outcome should it produce? Link a relevant issue or design decision when it adds context.
 
+Lead with the problem as the person who hit it would describe it, not with an inventory of edits:
+
+- Weak: "Removed implicit workspace carry-over from every new-thread entry point. Deleted `buildContextualThreadOptions` and the sidebar's seed-context machinery."
+- Strong: "New threads ignored the configured worktree default when started from an existing worktree. Now the defaults always apply."
+
 ## Approach
 
 How does the change achieve the outcome at a high level? Explain the main design choice or behavior change without listing every edited file or repeating the diff.
