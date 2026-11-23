@@ -1,0 +1,930 @@
+#!/usr/bin/env python3
+"""pr-mr-watch: read or wait on one pull or merge request on GitHub, GitLab, or Forgejo.
+
+  pr-mr-watch snapshot [REF] [--host KIND] [--repo HOST/PATH]
+  pr-mr-watch wait [REF] [--until ready|green|any-change] [--interval 30]
+                   [--timeout 3000] [--settle 120] [--host KIND] [--repo HOST/PATH]
+
+REF is a PR/MR number or web URL. Without REF, the open PR/MR of the current
+branch is used. KIND is github, gitlab, or forgejo; it is detected from the URL
+or the origin remote when omitted. --repo names the repository as
+HOST/OWNER/REPO (GitLab: HOST/GROUP/.../PROJECT) when the checkout is not it.
+
+The script calls gh, glab, or fgj, so it uses their existing login.
+
+snapshot prints one JSON object with the same fields on every host. Its gate
+splits what stands between the PR/MR and merging by who has to act: blockers
+for the agent, pending for checks, bot reviews, and host checks that clear on
+their own, and human for approvals and requested changes. The verdict ignores
+the draft flag: blocked, pending, waiting-for-review, or ready.
+
+wait prints one line per event on stdout and exits:
+  0  the --until condition holds, or the PR/MR merged
+       green       checks passed on the head (required checks when the
+                   host reports which are required, otherwise all checks)
+       ready       the gate verdict is ready or waiting-for-review, and
+                   --settle seconds have passed since wait started
+       any-change  the first event arrived, whatever it is
+  1  the agent must act: a check failed, conflicts, the PR/MR closed, the host
+     stayed unreachable, or (ready only) a gate blocker or a new comment or
+     review from someone else
+  2  bad arguments, unknown PR/MR, or another watcher holds this PR/MR
+  3  --timeout elapsed without a decision
+
+Conflicts count once two polls in a row report them, because hosts report
+them briefly while they check a new head. Without checks, green also waits
+--settle seconds before it exits 0.
+
+The first wait for a PR/MR records existing comments without reporting them;
+read them with snapshot. Later runs report only what arrived since the last
+run. State lives in ${XDG_STATE_HOME:-~/.local/state}/pr-mr-watch/.
+"""
+
+from __future__ import annotations
+
+import argparse
+import fcntl
+import fnmatch
+import hashlib
+import json
+import os
+import re
+import subprocess
+import sys
+import time
+from dataclasses import dataclass
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any, NoReturn
+from urllib.parse import quote, urlparse
+
+Json = Any
+SUCCESS, PENDING, FAILURE = "success", "pending", "failure"
+MAX_ERRORS = 5
+
+
+class HostError(Exception):
+    pass
+
+
+class NotFound(HostError):
+    pass
+
+
+NOT_FOUND = re.compile(r"\b404\b|Could not resolve to a|no (open )?(pull|merge) requests? (found|available)", re.I)
+
+
+def fail(message: str, code: int = 2) -> NoReturn:
+    print(f"pr-mr-watch: {message}", file=sys.stderr)
+    sys.exit(code)
+
+
+def run(cmd: list[str], check: bool = True) -> subprocess.CompletedProcess[str]:
+    try:
+        proc = subprocess.run(cmd, capture_output=True, text=True, stdin=subprocess.DEVNULL, timeout=120)
+    except FileNotFoundError:
+        raise HostError(f"{cmd[0]} is not installed") from None
+    except subprocess.TimeoutExpired:
+        raise HostError(f"{' '.join(cmd[:3])}: no answer within 120s") from None
+    if check and proc.returncode != 0:
+        detail = (proc.stderr or proc.stdout).strip().splitlines()
+        message = f"{' '.join(cmd[:3])}: {detail[-1] if detail else 'failed'}"
+        raise (NotFound if NOT_FOUND.search(proc.stderr + proc.stdout) else HostError)(message)
+    return proc
+
+
+def run_json(cmd: list[str]) -> Json:
+    out = run(cmd).stdout
+    try:
+        return json.loads(out) if out.strip() else None
+    except json.JSONDecodeError as error:
+        raise HostError(f"{' '.join(cmd[:3])}: invalid JSON ({error})") from None
+
+
+def probe(cmd: list[str]) -> subprocess.CompletedProcess[str] | None:
+    try:
+        return run(cmd, check=False)
+    except HostError:
+        return None
+
+
+def snippet(text: str | None, limit: int = 160) -> str:
+    flat = " ".join((text or "").split())
+    return flat if len(flat) <= limit else flat[: limit - 1] + "…"
+
+
+def utc(stamp: str | None) -> str:
+    """Normalize an ISO 8601 timestamp to a comparable UTC string; empty when missing."""
+    if not stamp:
+        return ""
+    try:
+        parsed = datetime.fromisoformat(stamp.replace("Z", "+00:00"))
+    except ValueError:
+        return stamp
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return parsed.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S")
+
+
+def looks_like_bot(login: str) -> bool:
+    # Covers name[bot], name-bot, name_bot, and GitLab's project_N_bot_HASH logins.
+    return re.search(r"(?:\[bot\]|[-_]bot)$|^(?:project|group)_\d+_bot_", login.lower()) is not None
+
+
+# Targets ---------------------------------------------------------------------
+
+
+@dataclass
+class Target:
+    kind: str
+    hostname: str
+    repo: str
+    number: int
+
+    @property
+    def key(self) -> str:
+        return f"{self.kind}:{self.hostname}/{self.repo}#{self.number}"
+
+
+def parse_remote(url: str) -> tuple[str, str]:
+    url = url.strip()
+    scp = re.match(r"^(?:[^@/]+@)?([^:/]+):(?!//)(.+)$", url)
+    if scp and "://" not in url:
+        host, path = scp.groups()
+    else:
+        parsed = urlparse(url)
+        if not parsed.hostname:
+            fail(f"cannot parse remote URL {url!r}")
+        host = parsed.hostname
+        if parsed.port and parsed.scheme in ("http", "https"):
+            host = f"{host}:{parsed.port}"
+        path = parsed.path
+    path = path.strip("/")
+    if path.endswith(".git"):
+        path = path[:-4]
+    return host, path
+
+
+def parse_web_url(ref: str) -> tuple[str, str, str, int]:
+    parsed = urlparse(ref)
+    host = parsed.netloc.split("@")[-1]
+    path = parsed.path.strip("/")
+    for kind, pattern in (
+        ("gitlab", r"^(.+?)/-/merge_requests/(\d+)"),
+        ("github", r"^([^/]+/[^/]+)/pull/(\d+)"),
+        ("forgejo", r"^([^/]+/[^/]+)/pulls/(\d+)"),
+    ):
+        match = re.match(pattern, path)
+        if match:
+            return kind, host, match.group(1), int(match.group(2))
+    fail(f"not a pull or merge request URL: {ref}")
+
+
+def detect_kind(hostname: str) -> str:
+    known = {"github.com": "github", "gitlab.com": "gitlab", "codeberg.org": "forgejo"}
+    if hostname in known:
+        return known[hostname]
+    for kind, cmd in (
+        ("github", ["gh", "auth", "status", "--hostname", hostname]),
+        ("gitlab", ["glab", "auth", "status", "--hostname", hostname]),
+    ):
+        proc = probe(cmd)
+        if proc and proc.returncode == 0:
+            return kind
+    proc = probe(["fgj", "auth", "status"])
+    if proc and proc.returncode == 0 and hostname in proc.stdout + proc.stderr:
+        return "forgejo"
+    fail(f"cannot tell which host {hostname} is; pass --host github|gitlab|forgejo")
+
+
+def current_branch() -> str:
+    branch = run(["git", "branch", "--show-current"]).stdout.strip()
+    if not branch:
+        fail("no current branch; pass a PR/MR number or URL")
+    return branch
+
+
+def current_number(kind: str, hostname: str, repo: str) -> int:
+    branch = current_branch()
+    if kind == "github":
+        out = run(["gh", "pr", "view", branch, "-R", f"{hostname}/{repo}", "--json", "number", "-q", ".number"])
+        return int(out.stdout.strip())
+    if kind == "gitlab":
+        data = run_json(["glab", "mr", "view", branch, "-R", f"https://{hostname}/{repo}", "-F", "json"])
+        return int(data["iid"])
+    fallback = None
+    for page in range(1, 11):
+        pulls = forgejo_api(hostname, f"repos/{repo}/pulls?state=open&limit=50&page={page}") or []
+        for pull in pulls:
+            head = pull.get("head") or {}
+            if head.get("ref") != branch:
+                continue
+            if (head.get("repo") or {}).get("full_name") == repo:
+                return int(pull["number"])
+            fallback = fallback or int(pull["number"])
+        if len(pulls) < 50:
+            break
+    if fallback:
+        return fallback
+    raise NotFound(f"no open pull request for branch {branch} in {repo}")
+
+
+def resolve(args: argparse.Namespace) -> Target:
+    ref = args.ref
+    if ref and "://" in ref:
+        kind, hostname, repo, number = parse_web_url(ref)
+        return Target(args.host or kind, hostname, repo, number)
+    if ref and not ref.lstrip("#!").isdigit():
+        fail(f"REF must be a number or URL, got {ref!r}")
+    if args.repo:
+        hostname, _, repo = args.repo.partition("/")
+        if not repo:
+            fail("--repo must be HOST/OWNER/REPO")
+    else:
+        hostname, repo = parse_remote(run(["git", "remote", "get-url", "origin"]).stdout)
+    kind = args.host or detect_kind(hostname)
+    number = int(ref.lstrip("#!")) if ref else current_number(kind, hostname, repo)
+    return Target(kind, hostname, repo, number)
+
+
+# Normalized model ------------------------------------------------------------
+
+
+def check(name: str, state: str, required: bool | None, url: str | None) -> dict[str, Any]:
+    return {"name": name, "state": state, "required": required, "url": url}
+
+
+def item(kind: str, ident: Any, author: str, bot: bool, created: str | None, url: str | None,
+         text: str | None, state: str | None = None, thread: str | None = None) -> dict[str, Any]:
+    return {
+        "id": f"{kind}:{ident}",
+        "kind": kind,
+        "author": author,
+        "bot": bot,
+        "created": created,
+        "url": url,
+        "state": state,
+        "thread": thread,
+        "text": snippet(text),
+    }
+
+
+def summarize_checks(items: list[dict[str, Any]]) -> dict[str, Any]:
+    required = [c for c in items if c["required"]]
+    counted = required or items
+    states = {c["state"] for c in counted}
+    if not counted:
+        state = "none"
+    elif FAILURE in states:
+        state = FAILURE
+    elif PENDING in states:
+        state = PENDING
+    else:
+        state = SUCCESS
+    return {
+        "state": state,
+        "counted": "required" if required else "all",
+        "failing": [c["name"] for c in counted if c["state"] == FAILURE],
+        "items": items,
+    }
+
+
+CONFLICTS = "conflicts with base"
+
+
+def compute_gate(snap: dict[str, Any], host_blockers: list[str], host_pending: list[str] | None = None) -> dict[str, Any]:
+    """Split what stands between the PR/MR and merging by who has to act."""
+    blockers: list[str] = []
+    pending: list[str] = list(host_pending or [])
+    human: list[str] = []
+    checks = snap["checks"]
+    if snap["state"] != "open":
+        blockers.append(f"not open ({snap['state']})")
+    if checks["state"] == FAILURE:
+        blockers.append("checks failing: " + ", ".join(checks["failing"]))
+    elif checks["state"] == PENDING:
+        pending.append("checks pending")
+    if snap["behind"]:
+        blockers.append("behind base")
+    if snap["conflicts"]:
+        blockers.append(CONFLICTS)
+    if snap["threads_awaiting_reply"]:
+        count = snap["threads_awaiting_reply"]
+        blockers.append(f"{count} review thread{'' if count == 1 else 's'} awaiting a reply")
+    blockers += host_blockers
+    if snap["pending_bot_reviews"]:
+        pending.append("bot review pending: " + ", ".join(snap["pending_bot_reviews"]))
+    if snap["changes_requested"]:
+        human.append("changes requested")
+    if snap["approval_missing"]:
+        human.append("approval missing")
+    if blockers:
+        verdict = "blocked"
+    elif pending:
+        verdict = "pending"
+    elif human:
+        verdict = "waiting-for-review"
+    else:
+        verdict = "ready"
+    return {"verdict": verdict, "blockers": blockers, "pending": pending, "human": human, "draft": snap["draft"]}
+
+
+def awaiting_reply(threads: list[tuple[bool, list[str]]], viewer: str) -> int:
+    """Count unresolved threads whose last comment is not the viewer's."""
+    return sum(1 for resolved, authors in threads if not resolved and authors and authors[-1] != viewer)
+
+
+def base_snapshot(t: Target, **fields: Any) -> dict[str, Any]:
+    snap = {
+        "host": t.kind,
+        "hostname": t.hostname,
+        "repo": t.repo,
+        "number": t.number,
+        "url": None,
+        "title": None,
+        "state": "open",
+        "draft": False,
+        "head_sha": None,
+        "base": None,
+        "behind": None,
+        "conflicts": None,
+        "auto_merge": None,
+        "checks": summarize_checks([]),
+        "approval_missing": False,
+        "changes_requested": False,
+        "unresolved_threads": 0,
+        "threads_awaiting_reply": 0,
+        "pending_bot_reviews": [],
+        "host_status": None,
+        "viewer": None,
+        "items": [],
+    }
+    snap.update(fields)
+    return snap
+
+
+# GitHub ----------------------------------------------------------------------
+
+GH_QUERY = """
+query($owner: String!, $name: String!, $number: Int!) {
+  viewer { login }
+  repository(owner: $owner, name: $name) {
+    pullRequest(number: $number) {
+      url title state isDraft headRefOid baseRefName
+      mergeable mergeStateStatus reviewDecision
+      autoMergeRequest { enabledAt }
+      reviewRequests(first: 50) {
+        nodes { requestedReviewer { __typename ... on Bot { login } ... on User { login } } }
+      }
+      reviews(last: 100) {
+        nodes { id author { __typename login } state submittedAt bodyText url commit { oid } }
+      }
+      comments(last: 100) {
+        nodes { id author { __typename login } createdAt bodyText url }
+      }
+      reviewThreads(last: 100) {
+        nodes {
+          id isResolved
+          comments(last: 50) { nodes { id author { __typename login } createdAt bodyText url } }
+        }
+      }
+      commits(last: 1) {
+        nodes { commit { statusCheckRollup { contexts(first: 100) { nodes {
+          __typename
+          ... on CheckRun { name status conclusion detailsUrl isRequired(pullRequestNumber: $number) }
+          ... on StatusContext { context state targetUrl isRequired(pullRequestNumber: $number) }
+        } } } } }
+      }
+    }
+  }
+}
+"""
+
+GH_CHECK_SUCCESS = {"SUCCESS", "NEUTRAL", "SKIPPED"}
+GH_CHECK_FAILURE = {"FAILURE", "CANCELLED", "TIMED_OUT", "ACTION_REQUIRED", "STARTUP_FAILURE", "ERROR", "STALE"}
+
+
+def gh_api(t: Target, *args: str) -> list[str]:
+    cmd = ["gh", "api"]
+    if t.hostname != "github.com":
+        cmd += ["--hostname", t.hostname]
+    return cmd + list(args)
+
+
+def gh_author(node: Json) -> tuple[str, bool]:
+    author = node.get("author") or {}
+    login = author.get("login") or "ghost"
+    return login, author.get("__typename") == "Bot" or login.endswith("[bot]")
+
+
+def github_snapshot(t: Target) -> dict[str, Any]:
+    owner, _, name = t.repo.partition("/")
+    data = run_json(gh_api(t, "graphql", "-f", f"query={GH_QUERY}", "-F", f"owner={owner}",
+                           "-F", f"name={name}", "-F", f"number={t.number}"))
+    if data.get("errors"):
+        raise HostError("; ".join(e.get("message", "") for e in data["errors"]))
+    pr = data["data"]["repository"]["pullRequest"]
+    if pr is None:
+        fail(f"pull request {t.key} not found")
+
+    checks = []
+    commits = pr["commits"]["nodes"]
+    rollup = commits[0]["commit"]["statusCheckRollup"] if commits else None
+    for node in (rollup or {}).get("contexts", {}).get("nodes", []):
+        if node["__typename"] == "CheckRun":
+            if node["status"] != "COMPLETED":
+                state = PENDING
+            elif node["conclusion"] in GH_CHECK_SUCCESS:
+                state = SUCCESS
+            elif node["conclusion"] in GH_CHECK_FAILURE:
+                state = FAILURE
+            else:
+                state = PENDING
+            checks.append(check(node["name"], state, node["isRequired"], node["detailsUrl"]))
+        else:
+            state = {"SUCCESS": SUCCESS, "FAILURE": FAILURE, "ERROR": FAILURE}.get(node["state"], PENDING)
+            checks.append(check(node["context"], state, node["isRequired"], node["targetUrl"]))
+
+    items = []
+    for node in pr["comments"]["nodes"]:
+        login, bot = gh_author(node)
+        items.append(item("comment", node["id"], login, bot, node["createdAt"], node["url"], node["bodyText"]))
+    for node in pr["reviews"]["nodes"]:
+        if node["state"] == "PENDING" or (node["state"] == "COMMENTED" and not node["bodyText"].strip()):
+            continue
+        login, bot = gh_author(node)
+        items.append(item("review", node["id"], login, bot, node["submittedAt"], node["url"],
+                          node["bodyText"], node["state"]))
+    unresolved = 0
+    threads = []
+    for thread in pr["reviewThreads"]["nodes"]:
+        unresolved += 0 if thread["isResolved"] else 1
+        authors = []
+        for node in thread["comments"]["nodes"]:
+            login, bot = gh_author(node)
+            authors.append(login)
+            items.append(item("thread", node["id"], login, bot, node["createdAt"], node["url"], node["bodyText"],
+                              "resolved" if thread["isResolved"] else "unresolved", thread["id"]))
+        threads.append((thread["isResolved"], authors))
+    viewer = data["data"]["viewer"]["login"]
+
+    pending_bots = []
+    for node in pr["reviewRequests"]["nodes"]:
+        reviewer = node.get("requestedReviewer") or {}
+        if reviewer.get("__typename") == "Bot":
+            pending_bots.append(reviewer["login"])
+
+    behind = None
+    if pr["state"] == "OPEN":
+        compare = run(gh_api(t, f"repos/{t.repo}/compare/{quote(pr['baseRefName'], safe='')}...{pr['headRefOid']}",
+                             "--jq", ".behind_by"), check=False)
+        if compare.returncode == 0 and compare.stdout.strip().isdigit():
+            behind = int(compare.stdout.strip()) > 0
+
+    snap = base_snapshot(
+        t,
+        url=pr["url"],
+        title=pr["title"],
+        state={"OPEN": "open", "MERGED": "merged", "CLOSED": "closed"}[pr["state"]],
+        draft=pr["isDraft"],
+        head_sha=pr["headRefOid"],
+        base=pr["baseRefName"],
+        behind=behind if behind is not None else pr["mergeStateStatus"] == "BEHIND",
+        conflicts=pr["mergeable"] == "CONFLICTING",
+        auto_merge=pr["autoMergeRequest"] is not None,
+        checks=summarize_checks(checks),
+        approval_missing=pr["reviewDecision"] == "REVIEW_REQUIRED",
+        changes_requested=pr["reviewDecision"] == "CHANGES_REQUESTED",
+        unresolved_threads=unresolved,
+        threads_awaiting_reply=awaiting_reply(threads, viewer),
+        pending_bot_reviews=pending_bots,
+        host_status=pr["mergeStateStatus"],
+        viewer=viewer,
+        items=items,
+    )
+    snap["gate"] = compute_gate(snap, [])
+    if snap["state"] == "open" and pr["mergeStateStatus"] == "BLOCKED" and snap["gate"]["verdict"] == "ready":
+        # Missing required checks and unmodeled rules show up only as BLOCKED.
+        snap["gate"] = compute_gate(snap, [], ["host status: BLOCKED (a required check has not reported, "
+                                               "or a rule the snapshot does not model)"])
+    return snap
+
+
+# GitLab ----------------------------------------------------------------------
+
+GL_JOB_STATES = {"success": SUCCESS, "skipped": SUCCESS, "failed": FAILURE, "canceled": FAILURE}
+# detailed_merge_status values the snapshot already covers through its own fields.
+GL_COVERED_STATUSES = {
+    "mergeable", "draft_status", "not_approved", "ci_must_pass", "ci_still_running", "conflict", "need_rebase",
+    "requested_changes", "not_open",
+}
+# detailed_merge_status values that clear once GitLab finishes checking the merge request.
+GL_TRANSIENT_STATUSES = {"checking", "unchecked", "preparing", "approvals_syncing"}
+
+
+def gitlab_api(t: Target, endpoint: str) -> Json:
+    return run_json(["glab", "api", "--hostname", t.hostname, endpoint])
+
+
+def gitlab_snapshot(t: Target) -> dict[str, Any]:
+    base = f"projects/{quote(t.repo, safe='')}/merge_requests/{t.number}"
+    mr = gitlab_api(t, f"{base}?include_diverged_commits_count=true")
+    viewer = gitlab_api(t, "user")["username"]
+
+    checks = []
+    pipeline = mr.get("head_pipeline")
+    if pipeline:
+        project = quote(t.repo, safe="")
+        jobs = gitlab_api(t, f"projects/{project}/pipelines/{pipeline['id']}/jobs?per_page=100") or []
+        stale = pipeline.get("sha") != mr["sha"]
+        for job in jobs:
+            optional = bool(job.get("allow_failure"))
+            state = GL_JOB_STATES.get(job["status"], PENDING)
+            if job["status"] == "manual":
+                # An optional manual job does not block; a blocking one waits for someone to start it.
+                state = SUCCESS if optional else FAILURE
+            if stale:
+                state = PENDING
+            checks.append(check(job["name"], state, not optional, job.get("web_url")))
+    elif mr.get("detailed_merge_status") == "ci_must_pass":
+        checks.append(check("pipeline", PENDING, True, None))
+
+    items = []
+    unresolved = 0
+    threads = []
+    discussions = gitlab_api(t, f"{base}/discussions?per_page=100") or []
+    for discussion in discussions:
+        notes = [n for n in discussion.get("notes", []) if not n.get("system")]
+        resolvable = [n for n in notes if n.get("resolvable")]
+        resolved = bool(resolvable) and all(n.get("resolved") for n in resolvable)
+        if resolvable and not resolved:
+            unresolved += 1
+        if resolvable:
+            threads.append((resolved, [(n.get("author") or {}).get("username") or "ghost" for n in notes]))
+        for note in notes:
+            author = note.get("author") or {}
+            login = author.get("username") or "ghost"
+            kind = "thread" if resolvable else "comment"
+            state = ("resolved" if resolved else "unresolved") if resolvable else None
+            url = f"{mr['web_url']}#note_{note['id']}"
+            items.append(item(kind, note["id"], login, bool(author.get("bot")) or looks_like_bot(login),
+                              note.get("created_at"), url, note.get("body"), state,
+                              discussion.get("id") if resolvable else None))
+
+    reviewers = gitlab_api(t, f"{base}/reviewers") or []
+    pending_bots = []
+    changes_requested = mr.get("detailed_merge_status") == "requested_changes"
+    for reviewer in reviewers:
+        user = reviewer.get("user") or {}
+        login = user.get("username") or ""
+        if reviewer.get("state") == "requested_changes":
+            changes_requested = True
+        if reviewer.get("state") in ("unreviewed", "review_started") and (user.get("bot") or looks_like_bot(login)):
+            pending_bots.append(login)
+
+    approvals = gitlab_api(t, f"{base}/approvals") or {}
+    approval_missing = (approvals.get("approvals_left") or 0) > 0 or mr.get("detailed_merge_status") == "not_approved"
+
+    status = mr.get("detailed_merge_status")
+    known = GL_COVERED_STATUSES | GL_TRANSIENT_STATUSES
+    host_blockers = [] if status in known or status is None else [f"host status: {status}"]
+    host_pending = [f"host status: {status}"] if status in GL_TRANSIENT_STATUSES else []
+    snap = base_snapshot(
+        t,
+        url=mr["web_url"],
+        title=mr["title"],
+        state={"opened": "open", "merged": "merged", "closed": "closed", "locked": "open"}[mr["state"]],
+        draft=bool(mr.get("draft")),
+        head_sha=mr["sha"],
+        base=mr["target_branch"],
+        behind=(mr.get("diverged_commits_count") or 0) > 0 or status == "need_rebase",
+        conflicts=bool(mr.get("has_conflicts")) or status == "conflict",
+        auto_merge=bool(mr.get("merge_when_pipeline_succeeds")),
+        checks=summarize_checks(checks),
+        approval_missing=approval_missing,
+        changes_requested=changes_requested,
+        unresolved_threads=unresolved,
+        threads_awaiting_reply=awaiting_reply(threads, viewer),
+        pending_bot_reviews=pending_bots,
+        host_status=status,
+        viewer=viewer,
+        items=items,
+    )
+    snap["gate"] = compute_gate(snap, host_blockers, host_pending)
+    return snap
+
+
+# Forgejo ---------------------------------------------------------------------
+
+FJ_STATUS_STATES = {"success": SUCCESS, "warning": SUCCESS, "failure": FAILURE, "error": FAILURE}
+
+
+def forgejo_api(hostname: str, endpoint: str) -> Json:
+    return run_json(["fgj", "api", "--hostname", hostname, endpoint])
+
+
+def forgejo_protection(t: Target, base: str) -> dict[str, Any] | None:
+    try:
+        rules = forgejo_api(t.hostname, f"repos/{t.repo}/branch_protections") or []
+    except HostError:
+        return None
+    exact = [r for r in rules if r.get("rule_name") == base]
+    globbed = [r for r in rules if fnmatch.fnmatchcase(base, r.get("rule_name") or "")]
+    return (exact or globbed or [None])[0]
+
+
+def forgejo_snapshot(t: Target) -> dict[str, Any]:
+    api = lambda endpoint: forgejo_api(t.hostname, endpoint)  # noqa: E731
+    pr = api(f"repos/{t.repo}/pulls/{t.number}")
+    viewer = api("user")["login"]
+    head, base = pr["head"]["sha"], pr["base"]["ref"]
+    protection = forgejo_protection(t, base)
+    required_contexts = []
+    if protection and protection.get("enable_status_check"):
+        required_contexts = protection.get("status_check_contexts") or []
+
+    status = api(f"repos/{t.repo}/commits/{head}/status?limit=100") or {}
+    checks = []
+    for entry in status.get("statuses") or []:
+        name = entry["context"]
+        required = any(fnmatch.fnmatchcase(name, pattern) for pattern in required_contexts) if required_contexts else None
+        checks.append(check(name, FJ_STATUS_STATES.get(entry["status"], PENDING), required, entry.get("target_url")))
+    for pattern in required_contexts:
+        if not any(fnmatch.fnmatchcase(c["name"], pattern) for c in checks):
+            checks.append(check(pattern, PENDING, True, None))
+
+    items = []
+    # The API has no thread object. Comments on the same file line form one
+    # thread, and Forgejo stores the resolution on its first comment.
+    threads_by_line: dict[tuple[Any, Any], list[dict[str, Any]]] = {}
+    latest_by_user: dict[str, dict[str, Any]] = {}
+    for review in api(f"repos/{t.repo}/pulls/{t.number}/reviews") or []:
+        login = (review.get("user") or {}).get("login") or "ghost"
+        if review["state"] in ("APPROVED", "REQUEST_CHANGES") and not review.get("dismissed"):
+            latest_by_user[login] = review
+        if review["state"] not in ("PENDING", "REQUEST_REVIEW") and (review.get("body") or "").strip():
+            items.append(item("review", review["id"], login, looks_like_bot(login), review.get("submitted_at"),
+                              review.get("html_url"), review.get("body"), review["state"]))
+        if review.get("comments_count"):
+            for comment in api(f"repos/{t.repo}/pulls/{t.number}/reviews/{review['id']}/comments") or []:
+                line = (comment.get("path"), comment.get("original_position") or comment.get("position"))
+                threads_by_line.setdefault(line, []).append(comment)
+    viewer_replied = ""
+    for comment in api(f"repos/{t.repo}/issues/{t.number}/comments") or []:
+        login = (comment.get("user") or {}).get("login") or "ghost"
+        if login == viewer:
+            viewer_replied = max(viewer_replied, utc(comment.get("created_at")))
+        items.append(item("comment", comment["id"], login, looks_like_bot(login), comment.get("created_at"),
+                          comment.get("html_url"), comment.get("body")))
+
+    threads = []
+    for comments in threads_by_line.values():
+        comments.sort(key=lambda c: c["id"])
+        resolved = comments[0].get("resolver") is not None
+        authors = [(c.get("user") or {}).get("login") or "ghost" for c in comments]
+        # Replies go to the top level, so a later top-level comment from the viewer answers the thread.
+        if viewer_replied > utc(comments[-1].get("created_at")):
+            authors.append(viewer)
+        threads.append((resolved, authors))
+        for comment, author in zip(comments, authors):
+            items.append(item("thread", comment["id"], author, looks_like_bot(author), comment.get("created_at"),
+                              comment.get("html_url"), comment.get("body"),
+                              "resolved" if resolved else "unresolved"))
+
+    approvals = sum(1 for r in latest_by_user.values()
+                    if r["state"] == "APPROVED" and r.get("official", True) and not r.get("stale"))
+    required_approvals = (protection or {}).get("required_approvals") or 0
+    pending_bots = [r["login"] for r in pr.get("requested_reviewers") or [] if looks_like_bot(r.get("login", ""))]
+
+    behind = None
+    if pr["state"] == "open":
+        branch = api(f"repos/{t.repo}/branches/{quote(base, safe='')}")
+        behind = pr.get("merge_base") != branch["commit"]["id"]
+
+    state = "merged" if pr.get("merged") else pr["state"]
+    draft = bool(pr.get("draft"))
+    snap = base_snapshot(
+        t,
+        url=pr["html_url"],
+        title=pr["title"],
+        state=state,
+        draft=draft,
+        head_sha=head,
+        base=base,
+        behind=behind,
+        # Forgejo also reports drafts and pull requests it is still checking as not mergeable.
+        conflicts=state == "open" and not draft and pr.get("mergeable") is False,
+        auto_merge=None,
+        checks=summarize_checks(checks),
+        approval_missing=approvals < required_approvals,
+        changes_requested=any(r["state"] == "REQUEST_CHANGES" for r in latest_by_user.values()),
+        unresolved_threads=sum(1 for resolved, _ in threads if not resolved),
+        threads_awaiting_reply=awaiting_reply(threads, viewer),
+        pending_bot_reviews=pending_bots,
+        host_status=f"mergeable={pr.get('mergeable')}",
+        viewer=viewer,
+        items=items,
+    )
+    snap["gate"] = compute_gate(snap, [])
+    return snap
+
+
+SNAPSHOTS = {"github": github_snapshot, "gitlab": gitlab_snapshot, "forgejo": forgejo_snapshot}
+
+
+def snapshot(t: Target) -> dict[str, Any]:
+    if t.kind not in SNAPSHOTS:
+        fail(f"unknown host kind {t.kind}")
+    snap = SNAPSHOTS[t.kind](t)
+    snap["items"].sort(key=lambda i: i["created"] or "")
+    return snap
+
+
+# Waiting ---------------------------------------------------------------------
+
+
+class Watch:
+    def __init__(self, target: Target, until: str, settle: int) -> None:
+        self.target = target
+        self.until = until
+        self.settle = settle
+        self.started = time.monotonic()
+        root = Path(os.environ.get("XDG_STATE_HOME") or Path.home() / ".local" / "state") / "pr-mr-watch"
+        root.mkdir(parents=True, exist_ok=True)
+        digest = hashlib.sha1(target.key.encode()).hexdigest()[:16]
+        self.state_path = root / f"{digest}.json"
+        self.lock_path = root / f"{digest}.lock"
+        self.lock_file = None
+        self.state: dict[str, Any] | None = None
+        self.events = 0
+        self.conflict_polls = 0
+
+    def lock(self) -> None:
+        self.lock_file = open(self.lock_path, "a+")
+        try:
+            fcntl.flock(self.lock_file, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            self.lock_file.seek(0)
+            fail(f"another pr-mr-watch (pid {self.lock_file.read().strip() or '?'}) watches {self.target.key}")
+        self.lock_file.seek(0)
+        self.lock_file.truncate()
+        self.lock_file.write(str(os.getpid()))
+        self.lock_file.flush()
+
+    def load(self) -> None:
+        try:
+            self.state = json.loads(self.state_path.read_text())
+        except (FileNotFoundError, json.JSONDecodeError):
+            self.state = None
+
+    def save(self, snap: dict[str, Any]) -> None:
+        seen = set(self.state["seen"]) if self.state else set()
+        seen.update(i["id"] for i in snap["items"])
+        state = {
+            "key": self.target.key,
+            "seen": sorted(seen),
+            "head": snap["head_sha"],
+            "checks": {c["name"]: c["state"] for c in snap["checks"]["items"]},
+            "checks_state": snap["checks"]["state"],
+            "behind": snap["behind"],
+            "conflicts": snap["conflicts"],
+            "draft": snap["draft"],
+            "state": snap["state"],
+        }
+        tmp = self.state_path.with_suffix(".tmp")
+        tmp.write_text(json.dumps(state))
+        tmp.replace(self.state_path)
+        self.state = state
+
+    def say(self, line: str) -> None:
+        self.events += 1
+        print(line, flush=True)
+
+    def finish(self, code: int, reason: str, snap: dict[str, Any] | None = None) -> NoReturn:
+        if snap is not None:
+            gate = snap["gate"]
+            parts = gate["blockers"] + gate["pending"] + gate["human"] + (["draft"] if gate["draft"] else [])
+            print(f"gate: {gate['verdict']}" + (f" ({'; '.join(parts)})" if parts else ""), flush=True)
+        print(f"result: {reason}", flush=True)
+        sys.exit(code)
+
+    def diff(self, snap: dict[str, Any]) -> bool:
+        """Print events since the saved state. Returns True when one needs the agent."""
+        prev = self.state
+        actionable = False
+        if prev is None:
+            return False
+        if snap["head_sha"] != prev["head"]:
+            self.say(f"head moved to {str(snap['head_sha'])[:12]}")
+        for c in snap["checks"]["items"]:
+            if c["state"] == FAILURE and prev["checks"].get(c["name"]) != FAILURE:
+                self.say(f"check failed: {c['name']} {c['url'] or ''}".rstrip())
+                actionable = True
+        if snap["checks"]["state"] == SUCCESS and prev["checks_state"] != SUCCESS:
+            self.say("checks passed")
+        if snap["conflicts"] and not prev["conflicts"]:
+            self.say("conflicts with base")
+        if snap["behind"] and not prev["behind"]:
+            self.say("behind base")
+            actionable = actionable or self.until == "ready"
+        if snap["draft"] != prev["draft"]:
+            self.say("marked draft" if snap["draft"] else "marked ready")
+        viewer = snap["viewer"]
+        for i in snap["items"]:
+            if i["id"] in prev["seen"] or i["author"] == viewer:
+                continue
+            label = i["kind"] + (f" {i['state']}" if i["state"] and i["kind"] == "review" else "")
+            bot = " (bot)" if i["bot"] else ""
+            self.say(f"{label} by @{i['author']}{bot}: {i['text']} {i['url'] or ''}".rstrip())
+            actionable = actionable or self.until == "ready"
+        return actionable
+
+    def decide(self, snap: dict[str, Any], actionable: bool) -> None:
+        if snap["state"] == "merged":
+            self.say("merged")
+            self.finish(0, "merged", snap)
+        if snap["state"] == "closed":
+            self.say("closed")
+            self.finish(1, "closed", snap)
+        if self.until == "any-change":
+            if self.events:
+                self.finish(0, "changed", snap)
+            return
+        checks = snap["checks"]["state"]
+        settled = time.monotonic() - self.started >= self.settle
+        # A host can report conflicts for a moment while it checks a new head, so wait for a second poll.
+        self.conflict_polls = self.conflict_polls + 1 if snap["conflicts"] else 0
+        conflicts = self.conflict_polls >= 2
+        if checks == FAILURE or conflicts:
+            self.finish(1, "action needed", snap)
+        if self.until == "green":
+            if not snap["conflicts"] and (checks == SUCCESS or (checks == "none" and settled)):
+                self.finish(0, "green", snap)
+            return
+        if actionable:
+            self.finish(1, "action needed", snap)
+        gate = snap["gate"]
+        if [b for b in gate["blockers"] if b != CONFLICTS]:
+            self.finish(1, "action needed", snap)
+        # Give the reviews and workflows that a push or the ready flip starts time to register.
+        if snap["conflicts"] or not settled:
+            return
+        if gate["verdict"] in ("ready", "waiting-for-review"):
+            self.finish(0, gate["verdict"], snap)
+
+    def run(self, interval: int, timeout: int) -> NoReturn:
+        self.lock()
+        self.load()
+        deadline = time.monotonic() + timeout
+        errors = 0
+        while True:
+            try:
+                snap = snapshot(self.target)
+            except NotFound as error:
+                fail(str(error))
+            except HostError as error:
+                errors += 1
+                print(f"pr-mr-watch: {error}", file=sys.stderr)
+                if errors >= MAX_ERRORS:
+                    self.finish(1, f"host unreachable: {error}")
+                if time.monotonic() >= deadline:
+                    self.finish(3, "timeout")
+                time.sleep(max(0, min(interval * 2 ** errors, 300, deadline - time.monotonic())))
+                continue
+            errors = 0
+            actionable = self.diff(snap)
+            self.save(snap)
+            self.decide(snap, actionable)
+            if time.monotonic() >= deadline:
+                self.finish(3, "timeout", snap)
+            time.sleep(interval)
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(prog="pr-mr-watch", description=__doc__.split("\n\n")[0])
+    sub = parser.add_subparsers(dest="command", required=True)
+    for name in ("snapshot", "wait"):
+        cmd = sub.add_parser(name)
+        cmd.add_argument("ref", nargs="?")
+        cmd.add_argument("--host", choices=sorted(SNAPSHOTS))
+        cmd.add_argument("--repo")
+        if name == "wait":
+            cmd.add_argument("--until", choices=("ready", "green", "any-change"), default="ready")
+            cmd.add_argument("--interval", type=int, default=30)
+            cmd.add_argument("--timeout", type=int, default=3000)
+            cmd.add_argument("--settle", type=int, default=120)
+    args = parser.parse_args()
+    try:
+        target = resolve(args)
+        if args.command == "snapshot":
+            print(json.dumps(snapshot(target), indent=2))
+            return
+    except NotFound as error:
+        fail(str(error))
+    except HostError as error:
+        fail(str(error), 1)
+    Watch(target, args.until, args.settle).run(max(args.interval, 5), args.timeout)
+
+
+if __name__ == "__main__":
+    main()

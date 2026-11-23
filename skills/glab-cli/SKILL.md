@@ -31,6 +31,9 @@ glab mr list
 glab mr view NUMBER --comments
 glab mr diff NUMBER
 glab mr create --source-branch BRANCH --target-branch main --title T   # WRITE
+glab mr create --draft --source-branch BRANCH --title T                # WRITE: draft
+glab mr update NUMBER --ready                                          # WRITE: draft -> ready
+glab mr update NUMBER --draft                                          # WRITE: ready -> draft
 glab mr approve NUMBER                                                 # WRITE
 glab mr merge NUMBER --squash                                          # HIGH-RISK: confirm
 ```

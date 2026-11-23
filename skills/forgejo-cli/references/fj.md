@@ -121,7 +121,8 @@ fj pr merge PR --method rebase                         # also: -d delete branch,
 fj pr browse PR
 ```
 
-Prefix the title with `WIP: ` to create a draft PR. `--autofill` derives the
+Prefix the title with `WIP: ` to create a draft PR, and remove the prefix with
+`fj pr edit PR title "Title"` to mark it ready. `--autofill` derives the
 title and body from commits. Merge methods: `merge`, `rebase`, `rebase-merge`,
 `squash`, `manual`, `fast-forward-only`.
 

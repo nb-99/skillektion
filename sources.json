@@ -237,6 +237,9 @@
         "path": "pstack/LICENSE"
       }
     },
+    "watch-pr-mr": {
+      "mode": "owned"
+    },
     "why": {
       "mode": "adapted",
       "repository": "https://github.com/cursor/plugins",

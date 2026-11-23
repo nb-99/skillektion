@@ -1,0 +1,4 @@
+interface:
+  display_name: "Watch PR/MR"
+  short_description: "Wait on PR/MR checks and reviews, then act"
+  default_prompt: "Use $watch-pr-mr to watch this PR through CI and review."
